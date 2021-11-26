@@ -9,6 +9,7 @@ import CreateUser from './components/createUser';
 import BugList from './components/bugList';
 import ViewBug from './components/viewBug';
 import CreateBug from './components/createBug';
+import ViewUser from "./components/viewUser";
 
 const App: React.FC<{}> = () => {
     return (
@@ -21,6 +22,7 @@ const App: React.FC<{}> = () => {
                     <Route path="/bug" element={<BugList />} />
                     <Route path="/view/:id" element={<ViewBug />} />
                     <Route path="/create" element={<CreateBug />} />
+                    <Route path="/profile" element={<ViewUser />} />
                 </Routes>
             </Router>
         </div>
