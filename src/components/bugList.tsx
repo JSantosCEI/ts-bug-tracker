@@ -2,6 +2,12 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router";
 import Bug from "./bug";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import AddBug from "./popups/addBug";
+
+library.add(faPlus);
 
 const BugList: React.FC = () => {
     const [username, setUsername] = useState<string>('');
@@ -56,7 +62,11 @@ const BugList: React.FC = () => {
                     </div>
                     :
                     <div className="container mt-4">
-                        <h1 className="text-capitalize">{username} Bug List</h1>
+                        <div className="d-flex justify-content-between">
+                            <h1 className="text-capitalize">{username} Bug List</h1>
+                            <button type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModal"><FontAwesomeIcon icon={faPlus} size="2x" /></button>
+                        </div>
+                        <AddBug />
                         <br />
                         <div className="d-grid gap-5">
                             <div className="row pt-1" style={{ minHeight: "35vh" }}>
