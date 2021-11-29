@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import Checker from "./popups/checker";
 
 const NavBar = () => {
     const [isToken, setIsToken] = useState(sessionStorage.token !== undefined);
@@ -7,6 +8,7 @@ const NavBar = () => {
     const removeToken = () => {
         sessionStorage.removeItem("token");
         setIsToken(false);
+        window.location.href = "/";
     }
 
     return (
@@ -33,11 +35,9 @@ const NavBar = () => {
                     }
                     {
                         isToken ?
-                            <Link to="/" className="d-flex" onClick={removeToken}>
-                                <button type="button" className="btn btn-primary">
-                                    Logout
-                                </button>
-                            </Link> :
+                            <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signOutBox">
+                                Logout
+                            </button> :
                             <Link to="/user" className="d-flex">
                                 <button type="button" className="btn btn-primary">
                                     Login/Register
@@ -45,6 +45,7 @@ const NavBar = () => {
                             </Link>
                     }
                 </div>
+                <Checker message="Are You Sure You Want To Log Out?" doThis={removeToken} idTag="signOutBox" />
             </div>
         </nav>
     )
