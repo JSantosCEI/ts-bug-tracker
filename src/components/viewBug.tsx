@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { User } from '../interfaces';
+import Checker from "./popups/checker";
 
 const ViewBug: React.FC = () => {
     const [bugName, setBugName] = useState<string>('');
@@ -70,6 +71,7 @@ const ViewBug: React.FC = () => {
     }
 
     const deleteBug = () => {
+        console.log("Deleting");
         axios.delete('https://bug-tracker-project1.herokuapp.com/bugs/' + id,)
             .then((res) => console.log(res.data));
 
@@ -89,6 +91,7 @@ const ViewBug: React.FC = () => {
                             </div>
                             <div>
                                 <p className="fs-5">Description: <br /> {description} </p>
+                                <button type="button" className="btn btn-secondary me-1" onClick={() => window.location.href = "/bug"}>Back</button>
                                 <button type="button" className="btn btn-primary" onClick={() => setMode(false)}>Edit</button>
                             </div>
                         </div>
@@ -159,13 +162,11 @@ const ViewBug: React.FC = () => {
                                     {users.map((user, index) => <option key={index}>{user}</option>)}
                                 </select>
                             </div>
-
-                            <div className="btn-group">
-                                <input className="btn btn-primary" type="submit" value="Save" />
-                                <button type="button" className="btn btn-secondary" onClick={() => setMode(true)}>Cancel</button>
-                                <button type="button" className="btn btn-danger" onClick={deleteBug}>Delete</button>
-                            </div>
+                            <input className="btn btn-primary me-1" type="submit" value="Save" />
+                            <button type="button" className="btn btn-secondary me-1" onClick={() => setMode(true)}>Cancel</button>
+                            <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#checkerBox">Delete</button>
                         </form>
+                        <Checker message={"Are You Sure You Want To Delete This " + type + "?"} doThis={deleteBug} />
                     </div>
             }
         </div>
