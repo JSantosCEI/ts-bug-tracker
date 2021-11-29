@@ -164,9 +164,9 @@ const ViewBug: React.FC = () => {
                             </div>
                             <input className="btn btn-primary me-1" type="submit" value="Save" />
                             <button type="button" className="btn btn-secondary me-1" onClick={() => setMode(true)}>Cancel</button>
-                            <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#checkerBox">Delete</button>
+                            <button type="button" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteBox">Delete</button>
                         </form>
-                        <Checker message={"Are You Sure You Want To Delete This " + type + "?"} doThis={deleteBug} />
+                        <Checker message={"Are You Sure You Want To Delete This " + type + "?"} doThis={deleteBug} idTag="deleteBox" />
                     </div>
             }
         </div>

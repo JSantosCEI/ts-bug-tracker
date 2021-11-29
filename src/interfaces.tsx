@@ -12,5 +12,6 @@ export interface SetRefresh {
 
 export interface Check {
     message: string,
-    doThis: () => void
+    doThis: () => void,
+    idTag: string
 }

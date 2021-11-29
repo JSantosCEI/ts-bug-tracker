@@ -1,10 +1,10 @@
 import React from "react";
 import { Check } from "../../interfaces";
 
-const Checker: React.FC<Check> = ({ message, doThis }) => {
+const Checker: React.FC<Check> = ({ message, doThis, idTag }) => {
     return (
         <div>
-            <div className="modal" id="checkerBox" tabIndex={-1}>
+            <div className="modal" id={idTag} tabIndex={-1}>
                 <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content">
                         <div className="modal-header">
