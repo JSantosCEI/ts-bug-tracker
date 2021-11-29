@@ -9,3 +9,8 @@ export interface SetRefresh {
     refresh: boolean,
     setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
+
+export interface Check {
+    message: string,
+    doThis: () => void
+}
