@@ -1,8 +1,9 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { User } from '../../interfaces'
+import { User, SetRefresh } from '../../interfaces'
 
-const AddBug: React.FC = () => {
+
+const AddBug: React.FC<SetRefresh> = ({ refresh, setRefresh }) => {
     const [bugName, setBugName] = useState<string>('');
     const [username, setUsername] = useState<string>('');
     const [type, setType] = useState<string>('Bug');
@@ -26,6 +27,8 @@ const AddBug: React.FC = () => {
         axios.post('https://bug-tracker-project1.herokuapp.com/bugs/add', bug)
             .then((res: any) => console.log(res.data))
             .catch((err) => console.log("no user", err));
+
+        setRefresh(!refresh);
     }
 
     useEffect(() => {
@@ -52,7 +55,7 @@ const AddBug: React.FC = () => {
                     </div>
                     <div className="modal-body">
                         <div className="container">
-                            <form className="col-sm-5 mx-auto">
+                            <form className="col-sm-12 mx-auto">
                                 <div className="mb-3">
                                     <label htmlFor="bugName">Bug Name: </label>
                                     <input type="text" value={bugName} name="bugName"
@@ -104,7 +107,7 @@ const AddBug: React.FC = () => {
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" className="btn btn-primary" onClick={onSubmit}>Submit</button>
+                        <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={onSubmit}>Submit</button>
                     </div>
                 </div>
             </div>

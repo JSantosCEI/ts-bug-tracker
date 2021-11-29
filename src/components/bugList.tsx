@@ -13,6 +13,7 @@ const BugList: React.FC = () => {
     const [username, setUsername] = useState<string>('');
     const [bugs, setBugs] = useState<Array<any>>([]);
     const [toAuth, setToAuth] = useState<boolean>(false);
+    const [refresh, setRefresh] = useState<boolean>(false);
 
     useEffect(() => {
         axios.get('https://bug-tracker-project1.herokuapp.com/api/private', { headers: { Authorization: `Bearer ${sessionStorage.token}` } })
@@ -25,7 +26,7 @@ const BugList: React.FC = () => {
                     .catch((err) => console.log(err));
             })
             .catch((err) => console.log(err));
-    }, [])
+    }, [refresh])
 
     const unassignedList = bugs
         .filter((bug) => bug.status === "Unassigned")
@@ -66,7 +67,7 @@ const BugList: React.FC = () => {
                             <h1 className="text-capitalize">{username} Bug List</h1>
                             <button type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModal"><FontAwesomeIcon icon={faPlus} size="2x" /></button>
                         </div>
-                        <AddBug />
+                        <AddBug refresh={refresh} setRefresh={setRefresh} />
                         <br />
                         <div className="d-grid gap-5">
                             <div className="row pt-1" style={{ minHeight: "35vh" }}>
