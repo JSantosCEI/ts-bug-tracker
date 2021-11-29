@@ -7,6 +7,7 @@ const CreateUser: React.FC<{ newUser?: boolean }> = ({ newUser }) => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [isNew, setNew] = useState<boolean>(newUser ? newUser : false);
+    const [logging, setLogging] = useState<boolean>(false);
 
     useEffect(() => {
         setNew(newUser ? newUser : false);
@@ -14,6 +15,7 @@ const CreateUser: React.FC<{ newUser?: boolean }> = ({ newUser }) => {
 
     const authentication = (e: React.FormEvent) => {
         e.preventDefault();
+        setLogging(true);
         const user = {
             email,
             password,
@@ -39,6 +41,7 @@ const CreateUser: React.FC<{ newUser?: boolean }> = ({ newUser }) => {
                 })
                 .catch((err) => console.log(err))
         }
+        setLogging(false);
     }
 
     return (
@@ -85,9 +88,14 @@ const CreateUser: React.FC<{ newUser?: boolean }> = ({ newUser }) => {
                                 */
                             }
                         </div>
-
                         <div className="d-flex justify-content-between">
-                            <input className="btn btn-primary" type="submit" />
+                            {
+                                logging ?
+                                    <div className="spinner-grow text-success" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </div> :
+                                    <input className="btn btn-primary" type="submit" />
+                            }
                             <button type="button" className="btn btn-link text-decoration-none" onClick={() => setNew(!isNew)}>
                                 {isNew ? "Have An Account?" : "Create New?"}
                             </button>
