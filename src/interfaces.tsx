@@ -15,3 +15,8 @@ export interface Check {
     doThis: () => void,
     idTag: string
 }
+
+export interface LoginProps {
+    newUser?: boolean,
+    expired?: boolean,
+}

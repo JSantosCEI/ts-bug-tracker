@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useLocation } from "react-router";
+import { LoginProps } from "../interfaces";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+
+library.add(faExclamationCircle);
 
 // if newUser prop is true this form will register a user, else for login 
-const CreateUser: React.FC<{ newUser?: boolean }> = ({ newUser }) => {
+const CreateUser: React.FC<LoginProps> = ({ newUser, expired }) => {
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [isNew, setNew] = useState<boolean>(newUser ? newUser : false);
     const [logging, setLogging] = useState<boolean>(false);
+    const { state } = useLocation();
 
     useEffect(() => {
-        setNew(newUser ? newUser : false);
+        setNew(state.newUser ? state.newUser : false);
     }, [newUser])
 
     const authentication = (e: React.FormEvent) => {
@@ -88,6 +96,12 @@ const CreateUser: React.FC<{ newUser?: boolean }> = ({ newUser }) => {
                                 */
                             }
                         </div>
+                        {
+                            (state.expired) &&
+                            <div>
+                                <p className="text-danger"><FontAwesomeIcon icon={faExclamationCircle} /> Session Expired. Please Sign In Again</p>
+                            </div>
+                        }
                         <div className="d-flex justify-content-between">
                             {
                                 logging ?
