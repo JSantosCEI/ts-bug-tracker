@@ -12,8 +12,8 @@ library.add(faPlus);
 const BugList: React.FC = () => {
     const [username, setUsername] = useState<string>('');
     const [bugs, setBugs] = useState<Array<any>>([]);
-    const [toAuth, setToAuth] = useState<boolean>(false);
     const [refresh, setRefresh] = useState<boolean>(false);
+    const [expired, setExpired] = useState<boolean>(false);
 
     useEffect(() => {
         axios.get('https://bug-tracker-project1.herokuapp.com/api/private', { headers: { Authorization: `Bearer ${sessionStorage.token}` } })
@@ -23,9 +23,14 @@ const BugList: React.FC = () => {
                     .then(res => {
                         setBugs([...res.data]);
                     })
-                    .catch((err) => console.log(err));
+                    .catch((err) => console.error(err));
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+                let message: string = err.message;
+                let code: number = parseInt(message.slice(-3));
+                console.log(code);
+                code === 400 ? setExpired(true) : console.error(err);
+            });
     }, [refresh])
 
     const unassignedList = bugs
@@ -50,17 +55,9 @@ const BugList: React.FC = () => {
 
     return (
         <div>
-            {toAuth && <Navigate to="/user" />}
             {
-                !sessionStorage.token ?
-                    <div className="container">
-                        <div className="col-5 mx-auto">
-                            <h1>Sign In to see your bugs!</h1>
-                            <button className="btn btn-primary" onClick={() => setToAuth(true)}>
-                                Sign In
-                            </button>
-                        </div>
-                    </div>
+                !sessionStorage.token || expired ?
+                    <Navigate to="/user" state={{ newUser: false, expired: true }} />
                     :
                     <div className="container mt-4">
                         <div className="d-flex justify-content-between">
