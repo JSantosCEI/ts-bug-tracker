@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Checker from "./popups/checker";
 
-const NavBar = () => {
+const NavBar: React.FC = () => {
     const [isToken, setIsToken] = useState(sessionStorage.token !== undefined);
 
     const removeToken = () => {
