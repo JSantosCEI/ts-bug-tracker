@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useLocation } from "react-router";
-import { LoginProps } from "../interfaces";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
@@ -9,17 +8,13 @@ import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 library.add(faExclamationCircle);
 
 // if newUser prop is true this form will register a user, else for login 
-const CreateUser: React.FC<LoginProps> = ({ newUser, expired }) => {
+const CreateUser: React.FC = () => {
+    const { state } = useLocation();
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [isNew, setNew] = useState<boolean>(newUser ? newUser : false);
+    const [isNew, setNew] = useState<boolean>(state.newUser ? state.newUser : false);
     const [logging, setLogging] = useState<boolean>(false);
-    const { state } = useLocation();
-
-    useEffect(() => {
-        setNew(state.newUser ? state.newUser : false);
-    }, [newUser])
 
     const authentication = (e: React.FormEvent) => {
         e.preventDefault();
