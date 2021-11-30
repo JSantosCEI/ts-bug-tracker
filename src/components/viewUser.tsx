@@ -12,9 +12,11 @@ const ViewUser: React.FC = () => {
             .then((res) => {
                 setUsername(res.data.data.username);
                 setEmail(res.data.data.email);
-                setCompany(res.data.data.company ? [...res.data.data.company] : [''])
+                setCompany(res.data.data.company ? [...res.data.data.company] : ['']);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+                console.log(err);
+            });
     }, [])
 
     return (
