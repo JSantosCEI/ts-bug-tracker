@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,8 +13,16 @@ const CreateUser: React.FC = () => {
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [isNew, setNew] = useState<boolean>(state.newUser ? state.newUser : false);
+    const [isNew, setNew] = useState<boolean>(false);
+    const [expired, setExpired] = useState(false);
     const [logging, setLogging] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (state !== null) {
+            setNew(state.newUser);
+            setExpired(state.expired);
+        }
+    }, [])
 
     const authentication = (e: React.FormEvent) => {
         e.preventDefault();
@@ -92,7 +100,7 @@ const CreateUser: React.FC = () => {
                             }
                         </div>
                         {
-                            (state.expired) &&
+                            (expired) &&
                             <div>
                                 <p className="text-danger"><FontAwesomeIcon icon={faExclamationCircle} /> Session Expired. Please Sign In Again</p>
                             </div>
