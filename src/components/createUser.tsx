@@ -22,7 +22,7 @@ const CreateUser: React.FC = () => {
             setNew(state.newUser);
             setExpired(state.expired);
         }
-    }, [])
+    }, [state])
 
     const authentication = (e: React.FormEvent) => {
         e.preventDefault();
