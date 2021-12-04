@@ -22,14 +22,15 @@ const ViewUser: React.FC = () => {
             });
         axios.get('https://bug-tracker-project1.herokuapp.com/company/')
             .then((res) => {
-                setCompanyList([...res.data.member]);
+                setCompanyList(res.data.members);
             })
             .catch((err) => {
                 console.error(err);
             })
     }, [])
 
-    const saveUser = () => {
+    const saveUser = (e: React.FormEvent) => {
+        e.preventDefault();
         if (!companyList.includes(company)) {
             const newCompany = {
                 companyName: company,
@@ -62,7 +63,7 @@ const ViewUser: React.FC = () => {
             <form className="col-sm-5 mx-auto" onSubmit={saveUser}>
                 <h1>User Profile</h1>
                 <div className="mb-3">
-                    <label htmlFor="bugName">Username: </label>
+                    <label htmlFor="username">Username: </label>
                     <input type="text" value={username} name="username"
                         className="form-control"
                         onChange={e => setUsername(e.target.value)}
@@ -70,7 +71,7 @@ const ViewUser: React.FC = () => {
                 </div>
 
                 <div className="mb-3">
-                    <label htmlFor="bugName">Email: </label>
+                    <label htmlFor="email">Email: </label>
                     <input type="text" value={email} name="email"
                         className="form-control"
                         onChange={e => setEmail(e.target.value)}
@@ -78,7 +79,7 @@ const ViewUser: React.FC = () => {
                 </div>
 
                 <div className="mb-3">
-                    <label htmlFor="bugName">Company: </label>
+                    <label htmlFor="company">Company: </label>
                     <input type="text" value={company} name="company"
                         className="form-control" placeholder="Enter Your Company"
                         onChange={e => setCompany(e.target.value)}
