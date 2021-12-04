@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Company as CompanySchema } from "../interfaces";
 
 const ViewUser: React.FC = () => {
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [company, setCompany] = useState<string>('');
-    const [companyList, setCompanyList] = useState<Array<string>>([]);
+    const [companyList, setCompanyList] = useState<Array<CompanySchema>>([]);
     const [id, setId] = useState<string>('');
 
-    //call to the db for users and bug info
+    //call to the db for users and company info
     useEffect(() => {
         axios.get('https://bug-tracker-project1.herokuapp.com/api/private', { headers: { Authorization: `Bearer ${sessionStorage.token}` } })
             .then((res) => {
+                console.log(res.data.data);
                 setUsername(res.data.data.username);
                 setEmail(res.data.data.email);
                 setCompany(res.data.data.company);
@@ -22,7 +24,8 @@ const ViewUser: React.FC = () => {
             });
         axios.get('https://bug-tracker-project1.herokuapp.com/company/')
             .then((res) => {
-                setCompanyList(res.data.members);
+                console.log(res.data);
+                setCompanyList(res.data);
             })
             .catch((err) => {
                 console.error(err);
@@ -31,7 +34,8 @@ const ViewUser: React.FC = () => {
 
     const saveUser = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!companyList.includes(company)) {
+        //if company is new, create a new one, else check if users in members for that Company
+        if (!companyList.map((com: CompanySchema) => com.companyName).includes(company)) {
             const newCompany = {
                 companyName: company,
                 owner: username,
@@ -45,13 +49,24 @@ const ViewUser: React.FC = () => {
                 .catch((err) => {
                     console.error(err);
                 })
+        } else {
+            let thatCompany = companyList.filter((com) => com.companyName === company);
+            console.log(thatCompany);
+            if (!thatCompany[0].members.includes(username)) {
+                axios.post('https://bug-tracker-project1.herokuapp.com/company/join/' + thatCompany[0].id, username)
+                    .then((res) => {
+                        console.log("New company created ", res.data);
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                    })
+            }
         }
 
-        axios.post('https://bug-tracker-project1.herokuapp.com/api/auth/update/' + id)
+        const thisUser = { username, email, company };
+        axios.post('https://bug-tracker-project1.herokuapp.com/api/auth/update/' + id, thisUser)
             .then((res) => {
-                setUsername(res.data.data.username);
-                setEmail(res.data.data.email);
-                setCompany(res.data.data.company);
+                console.log(res);
             })
             .catch((err) => {
                 console.log(err);
