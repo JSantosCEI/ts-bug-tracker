@@ -5,6 +5,13 @@ export interface User {
     email: string,
     password: string
 }
+
+export interface Company {
+    id: string,
+    companyName: string,
+    owner: string,
+    members: Array<string>
+}
 export interface SetRefresh {
     refresh: boolean,
     setRefresh: React.Dispatch<React.SetStateAction<boolean>>
