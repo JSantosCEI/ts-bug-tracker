@@ -4,6 +4,7 @@ import { useLocation } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import { User as UserSchema } from "../interfaces";
 
 library.add(faExclamationCircle);
 
@@ -27,7 +28,7 @@ const CreateUser: React.FC = () => {
     const authentication = (e: React.FormEvent) => {
         e.preventDefault();
         setLogging(true);
-        const user = {
+        const user: UserSchema = {
             email,
             password,
         }
@@ -35,6 +36,7 @@ const CreateUser: React.FC = () => {
 
         if (isNew) {
             //create new user
+            user.username = username;
             axios.post('https://bug-tracker-project1.herokuapp.com/api/auth/register', user)
                 .then((res) => {
                     console.log(res.data);
