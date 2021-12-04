@@ -4,6 +4,7 @@ import { useLocation } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import { User as UserSchema } from "../interfaces";
 
 library.add(faExclamationCircle);
 
@@ -13,6 +14,7 @@ const CreateUser: React.FC = () => {
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [company, setCompany] = useState('');
     const [isNew, setNew] = useState<boolean>(false);
     const [expired, setExpired] = useState(false);
     const [logging, setLogging] = useState<boolean>(false);
@@ -27,7 +29,7 @@ const CreateUser: React.FC = () => {
     const authentication = (e: React.FormEvent) => {
         e.preventDefault();
         setLogging(true);
-        const user = {
+        const user: UserSchema = {
             email,
             password,
         }
@@ -35,6 +37,8 @@ const CreateUser: React.FC = () => {
 
         if (isNew) {
             //create new user
+            user.username = username;
+            user.company = company ? company : "";
             axios.post('https://bug-tracker-project1.herokuapp.com/api/auth/register', user)
                 .then((res) => {
                     console.log(res.data);
@@ -63,12 +67,21 @@ const CreateUser: React.FC = () => {
                     <form onSubmit={authentication}>
                         {
                             isNew &&
-                            <div className="mb-3">
-                                <label htmlFor="username">Username: </label>
-                                <input type="text" value={username} name="username"
-                                    className="form-control" placeholder="Enter Username"
-                                    onChange={e => setUsername(e.target.value)}
-                                />
+                            <div>
+                                <div className="mb-3">
+                                    <label htmlFor="username">Username: </label>
+                                    <input type="text" value={username} name="username"
+                                        className="form-control" placeholder="Enter Username"
+                                        onChange={e => setUsername(e.target.value)}
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="compnay">Company: </label>
+                                    <input type="text" value={company} name="company"
+                                        className="form-control" placeholder="Enter Company Name (Optional)"
+                                        onChange={e => setCompany(e.target.value)}
+                                    />
+                                </div>
                             </div>
                         }
 
