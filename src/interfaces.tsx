@@ -1,9 +1,10 @@
 import React from "react";
 export interface User {
-    id: string | number,
-    username: string,
+    id?: string | number,
+    username?: string,
     email: string,
-    password: string
+    password: string,
+    company?: string,
 }
 
 export interface Company {
