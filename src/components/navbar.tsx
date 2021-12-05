@@ -28,9 +28,6 @@ const NavBar: React.FC = () => {
                                 <Link className="nav-link" to="/bug">Bugs</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" to="/create">Create Bug</Link>
-                            </li>
-                            <li className="nav-item">
                                 <Link className="nav-link" to="/profile">Profile</Link>
                             </li>
                         </ul>
