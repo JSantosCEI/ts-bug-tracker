@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Company as CompanySchema } from "../interfaces";
+import { useNavigate } from "react-router";
 
 const ViewUser: React.FC = () => {
     const [username, setUsername] = useState<string>('');
@@ -8,6 +9,7 @@ const ViewUser: React.FC = () => {
     const [company, setCompany] = useState<string>('');
     const [companyList, setCompanyList] = useState<Array<CompanySchema>>([]);
     const [id, setId] = useState<string>('');
+    const navigate = useNavigate();
 
     //call to the db for users and company info
     useEffect(() => {
@@ -100,7 +102,7 @@ const ViewUser: React.FC = () => {
                         onChange={e => setCompany(e.target.value)}
                     />
                 </div>
-                <button type="button" className="btn btn-secondary me-1" onClick={() => window.location.href = "/bug"}>Back</button>
+                <button type="button" className="btn btn-secondary me-1" onClick={() => navigate("/bug")}>Back</button>
                 <input className="btn btn-primary me-1" type="submit" value="Save" />
             </form>
         </div>

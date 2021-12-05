@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
@@ -11,6 +11,7 @@ library.add(faExclamationCircle);
 // if newUser prop is true this form will register a user, else for login 
 const CreateUser: React.FC = () => {
     const { state } = useLocation();
+    const navigate = useNavigate();
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -43,7 +44,7 @@ const CreateUser: React.FC = () => {
                 .then((res) => {
                     console.log(res.data);
                     sessionStorage.setItem('token', res.data.token);
-                    window.location.href = '/bug';
+                    navigate('/bug');
                 })
                 .catch((err) => console.log(err))
         } else {
@@ -52,7 +53,7 @@ const CreateUser: React.FC = () => {
                 .then((res) => {
                     console.log(res.data);
                     sessionStorage.setItem('token', res.data.token);
-                    window.location.href = '/bug';
+                    navigate('/bug');
                 })
                 .catch((err) => console.log(err))
         }

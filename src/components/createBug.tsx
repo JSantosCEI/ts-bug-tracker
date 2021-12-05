@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Navigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import React, { useState, useEffect } from "react";
 import { User } from '../interfaces';
 
@@ -12,6 +12,7 @@ const CreateBug: React.FC = () => {
     const [priority, setPriority] = useState<string>('Low');
     const [users, setUsers] = useState<Array<string>>(["-"]);
     const [toAuth, setToAuth] = useState<boolean>(false);
+    const navigate = useNavigate();
 
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -27,7 +28,7 @@ const CreateBug: React.FC = () => {
         axios.post('https://bug-tracker-project1.herokuapp.com/bugs/add', bug)
             .then((res: any) => console.log(res.data))
             .catch((err) => console.log("no user", err));
-        window.location.href = '/bug';
+        navigate('/bug');
     }
 
     useEffect(() => {

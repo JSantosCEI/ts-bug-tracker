@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Checker from "./popups/checker";
+import { useNavigate } from 'react-router';
 
 const NavBar: React.FC = () => {
     const [isToken, setIsToken] = useState(sessionStorage.token !== undefined);
+    const navigate = useNavigate();
 
     const removeToken = () => {
         sessionStorage.removeItem("token");
         setIsToken(false);
-        window.location.href = "/";
+        navigate("/");
     }
 
     return (

@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { useParams } from "react-router";
 import { User } from '../interfaces';
 import Checker from "./popups/checker";
@@ -14,6 +15,7 @@ const ViewBug: React.FC = () => {
     const [priority, setPriority] = useState<string>('Low');
     const [users, setUsers] = useState<Array<string>>(["-"]);
     const [viewMode, setMode] = useState<boolean>(true);
+    const navigate = useNavigate();
     let { id } = useParams();
 
     //call to the db for users and bug info
@@ -91,7 +93,7 @@ const ViewBug: React.FC = () => {
                             </div>
                             <div>
                                 <p className="fs-5">Description: <br /> {description} </p>
-                                <button type="button" className="btn btn-secondary me-1" onClick={() => window.location.href = "/bug"}>Back</button>
+                                <button type="button" className="btn btn-secondary me-1" onClick={() => navigate('/bug')}>Back</button>
                                 <button type="button" className="btn btn-primary" onClick={() => setMode(false)}>Edit</button>
                             </div>
                         </div>
