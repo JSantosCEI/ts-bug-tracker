@@ -1,7 +1,8 @@
 import axios from "axios";
 import { Navigate, useNavigate } from "react-router";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { User } from '../interfaces';
+import { UserContext } from "./userContext";
 
 const CreateBug: React.FC = () => {
     const [bugName, setBugName] = useState<string>('');
@@ -12,6 +13,7 @@ const CreateBug: React.FC = () => {
     const [priority, setPriority] = useState<string>('Low');
     const [users, setUsers] = useState<Array<string>>(["-"]);
     const [toAuth, setToAuth] = useState<boolean>(false);
+    const { user } = useContext(UserContext);
     const navigate = useNavigate();
 
     const onSubmit = (e: React.FormEvent) => {
@@ -39,17 +41,17 @@ const CreateBug: React.FC = () => {
                 setUsers(["-", ...names]);
             })
         //get user info
-        axios.get('https://bug-tracker-project1.herokuapp.com/api/private', { headers: { Authorization: `Bearer ${sessionStorage.token}` } })
+        axios.get('https://bug-tracker-project1.herokuapp.com/api/private', { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => {
                 setUsername(res.data.data.username);
             })
-    }, [])
+    }, [user])
 
     return (
         <div>
             {toAuth && <Navigate to="/user" />}
             {
-                !sessionStorage.token ?
+                !user ?
                     <div className="container-fluid">
                         <div className="col-sm-5 mx-auto">
                             <h1>Sign In to see your bugs!</h1>

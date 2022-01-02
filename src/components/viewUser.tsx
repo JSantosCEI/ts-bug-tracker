@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { Company as CompanySchema } from "../interfaces";
 import { useNavigate } from "react-router";
+import { UserContext } from "./userContext";
 
 const ViewUser: React.FC = () => {
     const [username, setUsername] = useState<string>('');
@@ -9,11 +10,12 @@ const ViewUser: React.FC = () => {
     const [company, setCompany] = useState<string>('');
     const [companyList, setCompanyList] = useState<Array<CompanySchema>>([]);
     const [id, setId] = useState<string>('');
+    const { user } = useContext(UserContext);
     const navigate = useNavigate();
 
     //call to the db for users and company info
     useEffect(() => {
-        axios.get('https://bug-tracker-project1.herokuapp.com/api/private', { headers: { Authorization: `Bearer ${sessionStorage.token}` } })
+        axios.get('https://bug-tracker-project1.herokuapp.com/api/private', { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => {
                 console.log(res.data.data);
                 setUsername(res.data.data.username);
@@ -32,7 +34,7 @@ const ViewUser: React.FC = () => {
             .catch((err) => {
                 console.error(err);
             })
-    }, [])
+    }, [user])
 
     const saveUser = (e: React.FormEvent) => {
         e.preventDefault();

@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import { User as UserSchema } from "../interfaces";
+import { UserContext } from "./userContext";
 
 library.add(faExclamationCircle);
 
 // if newUser prop is true this form will register a user, else for login 
 const CreateUser: React.FC = () => {
+    const { setUser } = useContext(UserContext);
     const { state } = useLocation();
     const navigate = useNavigate();
     const [username, setUsername] = useState<string>('');
@@ -30,29 +32,31 @@ const CreateUser: React.FC = () => {
     const authentication = (e: React.FormEvent) => {
         e.preventDefault();
         setLogging(true);
-        const user: UserSchema = {
+        const thisUser: UserSchema = {
             email,
             password,
         }
-        console.log(user);
+        console.log(thisUser);
 
         if (isNew) {
             //create new user
-            user.username = username;
-            user.company = company ? company : "";
-            axios.post('https://bug-tracker-project1.herokuapp.com/api/auth/register', user)
+            thisUser.username = username;
+            thisUser.company = company ? company : "";
+            axios.post('https://bug-tracker-project1.herokuapp.com/api/auth/register', thisUser)
                 .then((res) => {
                     console.log(res.data);
                     sessionStorage.setItem('token', res.data.token);
+                    setUser(res.data.token);
                     navigate('/bug');
                 })
                 .catch((err) => console.log(err))
         } else {
             //login
-            axios.post('https://bug-tracker-project1.herokuapp.com/api/auth/login', user)
+            axios.post('https://bug-tracker-project1.herokuapp.com/api/auth/login', thisUser)
                 .then((res) => {
                     console.log(res.data);
                     sessionStorage.setItem('token', res.data.token);
+                    setUser(res.data.token);
                     navigate('/bug');
                 })
                 .catch((err) => console.log(err))

@@ -1,11 +1,12 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Navigate } from "react-router";
 import Bug from "./bug";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import AddBug from "./popups/addBug";
+import { UserContext } from "./userContext";
 
 library.add(faPlus);
 
@@ -14,9 +15,10 @@ const BugList: React.FC = () => {
     const [bugs, setBugs] = useState<Array<any>>([]);
     const [refresh, setRefresh] = useState<boolean>(false);
     const [expired, setExpired] = useState<boolean>(false);
+    const { user } = useContext(UserContext);
 
     useEffect(() => {
-        axios.get('https://bug-tracker-project1.herokuapp.com/api/private', { headers: { Authorization: `Bearer ${sessionStorage.token}` } })
+        axios.get('https://bug-tracker-project1.herokuapp.com/api/private', { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => {
                 setUsername(res.data.data.username);
                 axios.get(`https://bug-tracker-project1.herokuapp.com/bugs/user/${res.data.data.username}`)
@@ -31,7 +33,7 @@ const BugList: React.FC = () => {
                 console.log(code);
                 code === 400 ? setExpired(true) : console.error(err);
             });
-    }, [refresh])
+    }, [refresh, user])
 
     const unassignedList = bugs
         .filter((bug) => bug.status === "Unassigned")
@@ -56,7 +58,7 @@ const BugList: React.FC = () => {
     return (
         <div>
             {
-                !sessionStorage.token || expired ?
+                !user || expired ?
                     <Navigate to="/user" state={{ newUser: false, expired: true }} />
                     :
                     <div className="container mt-4">
