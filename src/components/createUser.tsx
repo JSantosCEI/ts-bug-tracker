@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import { User as UserSchema } from "../interfaces";
 import { UserContext } from "./userContext";
-
-library.add(faExclamationCircle);
+import Spinner from "./utilities/spinner";
+import ErrorText from "./utilities/errorText";
 
 // if newUser prop is true this form will register a user, else for login 
 const CreateUser: React.FC = () => {
@@ -21,6 +18,7 @@ const CreateUser: React.FC = () => {
     const [isNew, setNew] = useState<boolean>(false);
     const [expired, setExpired] = useState(false);
     const [logging, setLogging] = useState<boolean>(false);
+    const [failedLogIn, setFailedLogIn] = useState<boolean>(false);
 
     useEffect(() => {
         if (state !== null) {
@@ -29,9 +27,10 @@ const CreateUser: React.FC = () => {
         }
     }, [state])
 
-    const authentication = (e: React.FormEvent) => {
+    const authentication = async (e: React.FormEvent) => {
         e.preventDefault();
         setLogging(true);
+        console.log(logging);
         const thisUser: UserSchema = {
             email,
             password,
@@ -42,102 +41,105 @@ const CreateUser: React.FC = () => {
             //create new user
             thisUser.username = username;
             thisUser.company = company ? company : "";
-            axios.post('https://bug-tracker-project1.herokuapp.com/api/auth/register', thisUser)
+            await axios.post('https://bug-tracker-project1.herokuapp.com/api/auth/register', thisUser)
                 .then((res) => {
                     console.log(res.data);
                     sessionStorage.setItem('token', res.data.token);
                     setUser(res.data.token);
                     navigate('/bug');
                 })
-                .catch((err) => console.log(err))
+                .catch((err) => {
+                    console.log(err);
+                    setFailedLogIn(true);
+                })
         } else {
             //login
-            axios.post('https://bug-tracker-project1.herokuapp.com/api/auth/login', thisUser)
+            await axios.post('https://bug-tracker-project1.herokuapp.com/api/auth/login', thisUser)
                 .then((res) => {
                     console.log(res.data);
                     sessionStorage.setItem('token', res.data.token);
                     setUser(res.data.token);
                     navigate('/bug');
                 })
-                .catch((err) => console.log(err))
+                .catch((err) => {
+                    console.log(err, "hello");
+                    setFailedLogIn(true);
+                })
         }
+        console.log(logging);
         setLogging(false);
     }
 
     return (
         <div className="container mt-4">
-            <div className="col-sm-5 mx-auto">
-                {isNew ? <h2>Create New Account</h2> : <h2>Log In</h2>}
-                <div className="container-fluid">
-                    <form onSubmit={authentication}>
-                        {
-                            isNew &&
-                            <div>
+            {
+                logging ?
+                    <Spinner /> :
+                    <div className="col-sm-5 mx-auto">
+                        {isNew ? <h2>Create New Account</h2> : <h2>Log In</h2>}
+                        <div className="container-fluid">
+                            <form onSubmit={authentication}>
+                                {
+                                    isNew &&
+                                    <div>
+                                        <div className="mb-3">
+                                            <label htmlFor="username">Username: </label>
+                                            <input type="text" value={username} name="username"
+                                                className="form-control" placeholder="Enter Username"
+                                                onChange={e => setUsername(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="compnay">Company: </label>
+                                            <input type="text" value={company} name="company"
+                                                className="form-control" placeholder="Enter Company Name (Optional)"
+                                                onChange={e => setCompany(e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                }
+
                                 <div className="mb-3">
-                                    <label htmlFor="username">Username: </label>
-                                    <input type="text" value={username} name="username"
-                                        className="form-control" placeholder="Enter Username"
-                                        onChange={e => setUsername(e.target.value)}
+                                    <label htmlFor="email">Email: </label>
+                                    <input type="email" value={email} name="email"
+                                        className="form-control" placeholder="Enter Email"
+                                        onChange={e => setEmail(e.target.value)}
                                     />
                                 </div>
+
                                 <div className="mb-3">
-                                    <label htmlFor="compnay">Company: </label>
-                                    <input type="text" value={company} name="company"
-                                        className="form-control" placeholder="Enter Company Name (Optional)"
-                                        onChange={e => setCompany(e.target.value)}
+                                    <label htmlFor="password">Password: </label>
+                                    <input type="password" value={password} name="password"
+                                        className="form-control" placeholder="Enter Password"
+                                        minLength={5} required
+                                        onChange={e => setPassword(e.target.value)}
                                     />
+                                    {
+                                        isNew &&
+                                        <span id="passwordHelpInline" className="form-text">
+                                            Must at least 5 characters long
+                                        </span>
+                                        /* :
+                                        <button type="button" className="btn btn-sm btn-link text-decoration-none">
+                                            Forgot Password?
+                                        </button> 
+                                        */
+                                    }
                                 </div>
-                            </div>
-                        }
+                                {expired && <ErrorText message="Session Expired. Please Sign In Again" />}
+                                {failedLogIn && <ErrorText message="Incorrect Email or Password. Try Again" />}
 
-                        <div className="mb-3">
-                            <label htmlFor="email">Email: </label>
-                            <input type="email" value={email} name="email"
-                                className="form-control" placeholder="Enter Email"
-                                onChange={e => setEmail(e.target.value)}
-                            />
-                        </div>
-
-                        <div className="mb-3">
-                            <label htmlFor="password">Password: </label>
-                            <input type="password" value={password} name="password"
-                                className="form-control" placeholder="Enter Password"
-                                minLength={5} required
-                                onChange={e => setPassword(e.target.value)}
-                            />
-                            {
-                                isNew &&
-                                <span id="passwordHelpInline" className="form-text">
-                                    Must at least 5 characters long
-                                </span>
-                                /* :
-                                <button type="button" className="btn btn-sm btn-link text-decoration-none">
-                                    Forgot Password?
-                                </button> 
-                                */
-                            }
-                        </div>
-                        {
-                            (expired) &&
-                            <div>
-                                <p className="text-danger"><FontAwesomeIcon icon={faExclamationCircle} /> Session Expired. Please Sign In Again</p>
-                            </div>
-                        }
-                        <div className="d-flex justify-content-between">
-                            {
-                                logging ?
-                                    <div className="spinner-grow text-success" role="status">
-                                        <span className="visually-hidden">Loading...</span>
-                                    </div> :
+                                <div className="d-flex justify-content-between">
                                     <input className="btn btn-primary" type="submit" />
-                            }
-                            <button type="button" className="btn btn-link text-decoration-none" onClick={() => setNew(!isNew)}>
-                                {isNew ? "Have An Account?" : "Create New?"}
-                            </button>
+
+                                    <button type="button" className="btn btn-link text-decoration-none" onClick={() => setNew(!isNew)}>
+                                        {isNew ? "Have An Account?" : "Create New?"}
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                    </form>
-                </div>
-            </div>
+                    </div>
+            }
         </div>
     )
 }
