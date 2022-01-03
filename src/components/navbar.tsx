@@ -8,8 +8,6 @@ const NavBar: React.FC = () => {
     const navigate = useNavigate();
     const { user, setUser } = useContext(UserContext);
 
-    console.log("from navbar user: " + user);
-
     const clearUser = () => {
         sessionStorage.removeItem("token");
         setUser(null);
