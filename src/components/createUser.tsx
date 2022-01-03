@@ -86,7 +86,7 @@ const CreateUser: React.FC = () => {
                                             <label htmlFor="username">Username: </label>
                                             <input type="text" value={username} name="username"
                                                 className="form-control" placeholder="Enter Username"
-                                                onChange={e => setUsername(e.target.value)}
+                                                onChange={e => setUsername(e.target.value)} required
                                             />
                                         </div>
                                         <div className="mb-3">
@@ -103,7 +103,7 @@ const CreateUser: React.FC = () => {
                                     <label htmlFor="email">Email: </label>
                                     <input type="email" value={email} name="email"
                                         className="form-control" placeholder="Enter Email"
-                                        onChange={e => setEmail(e.target.value)}
+                                        onChange={e => setEmail(e.target.value)} required
                                     />
                                 </div>
 
