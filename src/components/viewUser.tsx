@@ -10,7 +10,7 @@ const ViewUser: React.FC = () => {
     const [company, setCompany] = useState<string>('');
     const [companyList, setCompanyList] = useState<Array<CompanySchema>>([]);
     const [id, setId] = useState<string>('');
-    const { user } = useContext(UserContext);
+    const { user, setUser } = useContext(UserContext);
     const navigate = useNavigate();
 
     //call to the db for users and company info
@@ -25,6 +25,7 @@ const ViewUser: React.FC = () => {
             })
             .catch((err) => {
                 console.log(err);
+                setUser('');
             });
         axios.get('https://bug-tracker-project1.herokuapp.com/company/')
             .then((res) => {
@@ -34,7 +35,7 @@ const ViewUser: React.FC = () => {
             .catch((err) => {
                 console.error(err);
             })
-    }, [user])
+    }, [user, setUser])
 
     const saveUser = (e: React.FormEvent) => {
         e.preventDefault();

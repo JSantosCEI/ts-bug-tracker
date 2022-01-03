@@ -1,9 +1,10 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useParams } from "react-router";
 import { User } from '../interfaces';
 import Checker from "./popups/checker";
+import { UserContext } from "./userContext";
 
 const ViewBug: React.FC = () => {
     const [bugName, setBugName] = useState<string>('');
@@ -16,6 +17,7 @@ const ViewBug: React.FC = () => {
     const [users, setUsers] = useState<Array<string>>(["-"]);
     const [viewMode, setMode] = useState<boolean>(true);
     const navigate = useNavigate();
+    const { setUser } = useContext(UserContext);
     let { id } = useParams();
 
     //call to the db for users and bug info
@@ -30,14 +32,17 @@ const ViewBug: React.FC = () => {
                 setReporter(result.data.reporter);
                 result.data.assginee && setAssginee(result.data.assginee);
             })
-            .catch((err) => { console.log(err); });
+            .catch((err) => {
+                console.log(err);
+                setUser('');
+            });
 
         axios.get('https://bug-tracker-project1.herokuapp.com/api/auth')
             .then((res) => {
                 const names = res.data.map((user: User) => user.username);
                 setUsers(["-", ...names]);
             })
-    }, [id])
+    }, [id, setUser])
 
     useEffect(() => {
         //there's a assginee, so it can't be unassigned 

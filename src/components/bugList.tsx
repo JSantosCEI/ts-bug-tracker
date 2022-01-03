@@ -15,7 +15,7 @@ const BugList: React.FC = () => {
     const [bugs, setBugs] = useState<Array<any>>([]);
     const [refresh, setRefresh] = useState<boolean>(false);
     const [expired, setExpired] = useState<boolean>(false);
-    const { user } = useContext(UserContext);
+    const { user, setUser } = useContext(UserContext);
 
     useEffect(() => {
         axios.get('https://bug-tracker-project1.herokuapp.com/api/private', { headers: { Authorization: `Bearer ${user}` } })
@@ -28,12 +28,13 @@ const BugList: React.FC = () => {
                     .catch((err) => console.error(err));
             })
             .catch((err) => {
+                setUser('');
                 let message: string = err.message;
                 let code: number = parseInt(message.slice(-3));
                 console.log(code);
                 code === 400 ? setExpired(true) : console.error(err);
             });
-    }, [refresh, user])
+    }, [refresh, user, setUser])
 
     const unassignedList = bugs
         .filter((bug) => bug.status === "Unassigned")
