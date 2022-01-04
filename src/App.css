@@ -34,6 +34,12 @@
   font-size: 1.3rem;
 }
 
+.navbar-toggler {
+  right: 10px;
+  top: 8px;
+  position: absolute;
+}
+
 @media only screen and (max-width: 600px) {
   .masthead h1 {
     font-size: 4rem;

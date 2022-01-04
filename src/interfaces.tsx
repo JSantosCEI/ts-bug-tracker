@@ -3,7 +3,15 @@ export interface User {
     id?: string | number,
     username?: string,
     email: string,
-    password: string
+    password: string,
+    company?: string,
+}
+
+export interface Company {
+    id: string,
+    companyName: string,
+    owner: string,
+    members: Array<string>
 }
 export interface SetRefresh {
     refresh: boolean,
