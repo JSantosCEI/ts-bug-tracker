@@ -13,7 +13,7 @@ const Bug: React.FC<{ bug: any }> = ({ bug }) => {
     const link = "/view/" + bug["_id"];
 
     return (
-        <div>
+        <div className="col">
             <li className="d-flex flex-row position-relative">
                 <Link className={shade} to={link}>{bug.bugName}</Link>
             </li>

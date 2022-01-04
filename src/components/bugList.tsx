@@ -63,44 +63,40 @@ const BugList: React.FC = () => {
                     <Navigate to="/user" state={{ newUser: false, expired: true }} />
                     :
                     <div className="container mt-4">
-                        <div className="d-flex justify-content-between">
+                        <div className="d-flex justify-content-between align-items-baseline">
                             <h1 className="text-capitalize">{username} Bug List</h1>
                             <button type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModal"><FontAwesomeIcon icon={faPlus} size="2x" /></button>
                         </div>
                         <AddBug refresh={refresh} setRefresh={setRefresh} />
                         <br />
                         <div className="d-grid gap-5">
-                            <div className="row pt-1" style={{ minHeight: "35vh" }}>
+                            <div className="row pt-1" style={{ minHeight: "20vh" }}>
                                 <ul className="list-group col-sm-4">
-                                    <h4 className="align-self-center">To Do</h4>
+                                    <h4 className="align-self-center mt-2 mb-3">To Do</h4>
                                     {toDoList}
                                 </ul>
                                 <ul className="list-group col-sm-4">
-                                    <h4 className="align-self-center">In Progress</h4>
+                                    <h4 className="align-self-center mt-2 mb-3">In Progress</h4>
                                     {inProgressList}
                                 </ul>
                                 <ul className="list-group col-sm-4">
-                                    <h4 className="align-self-center">Waiting On QA</h4>
+                                    <h4 className="align-self-center mt-2 mb-3">Waiting On QA</h4>
                                     {qaList}
                                 </ul>
                             </div>
                             <div className="row row-cols border-top pt-1">
-                                <ul className="list-group col ">
-                                    <h4 className="align-self-center">Unassgined</h4>
-                                    <div className="row">
-                                        <div className="col-sm-4">
-                                            {unassignedList}
-                                        </div>
+                                <ul className="list-group col">
+                                    <h4 className="align-self-center mt-2 mb-3">Unassgined</h4>
+                                    <div className="row row-cols-1 row-cols-sm-3">
+                                        {unassignedList}
                                     </div>
                                 </ul>
                             </div>
                             <div className="row row-cols border-top pt-1">
                                 <ul className="list-group col">
-                                    <h4 className="align-self-center">Completed</h4>
-                                    <div className="row">
-                                        <div className="col-sm-4">
-                                            {completeList}
-                                        </div>
+                                    <h4 className="align-self-center mt-2 mb-3">Completed</h4>
+                                    <div className="row row-cols-1 row-cols-sm-3">
+                                        {completeList}
                                     </div>
                                 </ul>
                             </div>
