@@ -48,4 +48,8 @@
   .masthead p {
     font-size: 1rem;
   }
+
+  .bugList {
+    width: 95%;
+  }
 }
