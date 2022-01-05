@@ -14,7 +14,8 @@ import CreateBug from './components/createBug';
 import ViewUser from "./components/viewUser";
 
 const App: React.FC = () => {
-    const [user, setUser] = useState<String | null>(null);
+    const stored: String | null = sessionStorage.token ? sessionStorage.token : null;
+    const [user, setUser] = useState<String | null>(stored);
     const value = useMemo(() => ({ user, setUser }), [user, setUser]);
 
     return (
