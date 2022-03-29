@@ -5,10 +5,11 @@ import { User as UserSchema } from "../interfaces";
 import { UserContext } from "./userContext";
 import Spinner from "./utilities/spinner";
 import ErrorText from "./utilities/errorText";
+import { apiUserBase, login } from "./api/userApi";
 
 // if newUser prop is true this form will register a user, else for login 
 const CreateUser: React.FC = () => {
-    const { setUser } = useContext(UserContext);
+    const { user, setUser } = useContext(UserContext);
     const { state } = useLocation();
     const navigate = useNavigate();
     const [username, setUsername] = useState<string>('');
@@ -30,22 +31,21 @@ const CreateUser: React.FC = () => {
     const authentication = async (e: React.FormEvent) => {
         e.preventDefault();
         setLogging(true);
-        console.log(logging);
         const thisUser: UserSchema = {
-            email,
+            username,
             password,
         }
         console.log(thisUser);
 
         if (isNew) {
             //create new user
-            thisUser.username = username;
+            thisUser.email = email;
             thisUser.company = company ? company : "";
-            await axios.post('https://bug-tracker-project1.herokuapp.com/api/auth/register', thisUser)
+            await axios.post(apiUserBase, thisUser, { headers: { Authorization: `Bearer ${user}` } })
                 .then((res) => {
-                    console.log(res.data);
-                    sessionStorage.setItem('token', res.data.token);
-                    setUser(res.data.token);
+                    //console.log(res.data);
+                    sessionStorage.setItem('token', res.data);
+                    setUser(res.data);
                     navigate('/bug');
                 })
                 .catch((err) => {
@@ -54,15 +54,15 @@ const CreateUser: React.FC = () => {
                 })
         } else {
             //login
-            await axios.post('https://bug-tracker-project1.herokuapp.com/api/auth/login', thisUser)
+            await axios.post(login, thisUser, { headers: { Authorization: `Bearer ${user}` } })
                 .then((res) => {
-                    console.log(res.data);
-                    sessionStorage.setItem('token', res.data.token);
-                    setUser(res.data.token);
+                    //console.log(res.data);
+                    sessionStorage.setItem('token', res.data);
+                    setUser(res.data);
                     navigate('/bug');
                 })
                 .catch((err) => {
-                    console.log(err, "hello");
+                    console.log(err);
                     setFailedLogIn(true);
                 })
         }
@@ -83,12 +83,13 @@ const CreateUser: React.FC = () => {
                                     isNew &&
                                     <div>
                                         <div className="mb-3">
-                                            <label htmlFor="username">Username: </label>
-                                            <input type="text" value={username} name="username"
-                                                className="form-control" placeholder="Enter Username"
-                                                onChange={e => setUsername(e.target.value)} required
+                                            <label htmlFor="email">Email: </label>
+                                            <input type="email" value={email} name="email"
+                                                className="form-control" placeholder="Enter Email"
+                                                onChange={e => setEmail(e.target.value)} required
                                             />
                                         </div>
+                                        
                                         <div className="mb-3">
                                             <label htmlFor="compnay">Company: </label>
                                             <input type="text" value={company} name="company"
@@ -98,12 +99,11 @@ const CreateUser: React.FC = () => {
                                         </div>
                                     </div>
                                 }
-
                                 <div className="mb-3">
-                                    <label htmlFor="email">Email: </label>
-                                    <input type="email" value={email} name="email"
-                                        className="form-control" placeholder="Enter Email"
-                                        onChange={e => setEmail(e.target.value)} required
+                                    <label htmlFor="username">Username: </label>
+                                    <input type="text" value={username} name="username"
+                                        className="form-control" placeholder="Enter Username"
+                                        onChange={e => setUsername(e.target.value)} required
                                     />
                                 </div>
 
