@@ -1,8 +1,7 @@
-import React from "react";
 export interface User {
     id?: string | number,
-    username?: string,
-    email: string,
+    username: string,
+    email?: string,
     password: string,
     company?: string,
 }
@@ -11,9 +10,21 @@ export interface Company {
     id: string,
     companyName: string,
     owner: string,
-    members: Array<string>
 }
+
+export interface Bug {
+    bugId: string | number,
+    bugName: string,
+    type: string,
+    description: string,
+    status: string,
+    priority: string,
+    reporterId: string | number,
+    assigneeId: string | number
+}
+
 export interface SetRefresh {
+    cId?: number | null,
     refresh: boolean,
     setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }
