@@ -1,8 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
+import { Bug as BugSchema } from "../interfaces";
 
-const Bug: React.FC<{ bug: any }> = ({ bug }) => {
+const Bug: React.FC<{ bug: BugSchema }> = ({ bug }) => {
 
     const shade = classNames(
         "list-group-item", "list-group-item-action", {
@@ -10,7 +11,7 @@ const Bug: React.FC<{ bug: any }> = ({ bug }) => {
         "list-group-item-warning": bug.priority === "Med",
         "list-group-item-danger": bug.priority === "High",
     })
-    const link = "/view/" + bug["_id"];
+    const link = "/view/" + bug.bugId;
 
     return (
         <div>
