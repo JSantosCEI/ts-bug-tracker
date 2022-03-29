@@ -2,7 +2,9 @@ import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useParams } from "react-router";
-import { User } from '../interfaces';
+import { User as UserSchema } from '../interfaces';
+import { apiBugBase, apiBugWithId } from "./api/bugApi";
+import { getAllUserByCompany } from "./api/userApi";
 import Checker from "./popups/checker";
 import { UserContext } from "./userContext";
 
@@ -17,12 +19,12 @@ const ViewBug: React.FC = () => {
     const [users, setUsers] = useState<Array<string>>(["-"]);
     const [viewMode, setMode] = useState<boolean>(true);
     const navigate = useNavigate();
-    const { setUser } = useContext(UserContext);
+    const { user, setUser } = useContext(UserContext);
     let { id } = useParams();
 
     //call to the db for users and bug info
     useEffect(() => {
-        axios.get(('https://bug-tracker-project1.herokuapp.com/bugs/' + id))
+        axios.get(apiBugWithId + id, { headers: { Authorization: `Bearer ${user}` } })
             .then((result) => {
                 setBugName(result.data.bugName);
                 setType(result.data.type);
@@ -37,9 +39,9 @@ const ViewBug: React.FC = () => {
                 setUser('');
             });
 
-        axios.get('https://bug-tracker-project1.herokuapp.com/api/auth')
+        axios.get(getAllUserByCompany + user, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => {
-                const names = res.data.map((user: User) => user.username);
+                const names = res.data.map((aUser: UserSchema) => aUser.username);
                 setUsers(["-", ...names]);
             })
     }, [id, setUser])
@@ -67,10 +69,10 @@ const ViewBug: React.FC = () => {
             description,
             status,
             priority,
-            assginee,
+            assginee
         }
         console.log(bug);
-        axios.post('https://bug-tracker-project1.herokuapp.com/bugs/update/' + id, bug)
+        axios.put(apiBugBase, bug, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => console.log(res.data))
             .catch((err) => { console.log(err); });
 
@@ -79,7 +81,7 @@ const ViewBug: React.FC = () => {
 
     const deleteBug = () => {
         console.log("Deleting");
-        axios.delete('https://bug-tracker-project1.herokuapp.com/bugs/' + id,)
+        axios.delete(apiBugWithId + id, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => console.log(res.data));
 
         window.location.href = "/bug";

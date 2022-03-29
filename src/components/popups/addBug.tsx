@@ -1,30 +1,33 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { User, SetRefresh } from '../../interfaces'
-
+import { UserContext } from "../userContext";
+import { apiBugBase } from "../api/bugApi";
+import { authUser, getAllUserByCompany } from "../api/userApi";
 
 const AddBug: React.FC<SetRefresh> = ({ refresh, setRefresh }) => {
     const [bugName, setBugName] = useState<string>('');
-    const [username, setUsername] = useState<string>('');
+    const [userId, setUserId] = useState<string | number>();
     const [type, setType] = useState<string>('Bug');
     const [description, setDescription] = useState<string>('');
-    const [assginee, setAssginee] = useState<string>('');
+    const [assgineeId, setAssgineeId] = useState<string | number>('');
     const [priority, setPriority] = useState<string>('Low');
     const [users, setUsers] = useState<Array<string>>(["-"]);
+    const { user } = useContext(UserContext);
 
     //creates new bug and closes the popup
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const bug = {
             bugName,
-            reporter: username,
+            reporter: userId,
             type,
             description,
             priority,
-            assginee,
+            assgineeId,
         }
         console.log(bug);
-        axios.post('https://bug-tracker-project1.herokuapp.com/bugs/add', bug)
+        axios.post(apiBugBase, bug, { headers: { Authorization: `Bearer ${user}` } })
             .then((res: any) => console.log(res.data))
             .catch((err) => console.log("no user", err));
 
@@ -32,17 +35,17 @@ const AddBug: React.FC<SetRefresh> = ({ refresh, setRefresh }) => {
     }
 
     useEffect(() => {
-        //get all users
-        axios.get('https://bug-tracker-project1.herokuapp.com/api/auth')
+        //get all users by id
+        axios.get(getAllUserByCompany + user, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => {
                 const names: Array<string> = res.data.map((user: User) => user.username);
                 setUsers(["-", ...names]);
             })
+            .catch((error) => { console.log("Could Not Get Company" + error) })
         //get user info
-        axios.get('https://bug-tracker-project1.herokuapp.com/api/private', { headers: { Authorization: `Bearer ${sessionStorage.token}` } })
-            .then((res) => {
-                setUsername(res.data.data.username);
-            })
+        axios.post(authUser, { "token": user }, { headers: { Authorization: `Bearer ${user}` } })
+            .then((res) => { setUserId(res.data.userId) } )
+            .catch((error) => { console.log("Could Not Get User" + error) })
     }, [])
 
     return (
@@ -97,7 +100,7 @@ const AddBug: React.FC<SetRefresh> = ({ refresh, setRefresh }) => {
                                 <div className='mb-3'>
                                     <label>Assginee: (Optional)</label>
                                     <select className="form-control"
-                                        onChange={e => setAssginee(e.target.value)}
+                                        onChange={e => setAssgineeId(e.target.value)}
                                     >
                                         {users.map((user, index) => <option key={index}>{user}</option>)}
                                     </select>

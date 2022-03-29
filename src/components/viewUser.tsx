@@ -3,11 +3,14 @@ import axios from "axios";
 import { Company as CompanySchema } from "../interfaces";
 import { useNavigate } from "react-router";
 import { UserContext } from "./userContext";
+import { apiCompanyBase } from "./api/companyAPI";
+import { apiUserBase, authUser } from "./api/userApi";
 
 const ViewUser: React.FC = () => {
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [company, setCompany] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
     const [companyList, setCompanyList] = useState<Array<CompanySchema>>([]);
     const [id, setId] = useState<string>('');
     const { user, setUser } = useContext(UserContext);
@@ -15,10 +18,12 @@ const ViewUser: React.FC = () => {
 
     //call to the db for users and company info
     useEffect(() => {
-        axios.get('https://bug-tracker-project1.herokuapp.com/api/private', { headers: { Authorization: `Bearer ${user}` } })
+        //get User Data
+        axios.post(authUser, { "token": user }, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => {
                 console.log(res.data.data);
                 setUsername(res.data.data.username);
+                setPassword(res.data.data.password);
                 setEmail(res.data.data.email);
                 setCompany(res.data.data.company);
                 setId(res.data.data._id);
@@ -27,7 +32,8 @@ const ViewUser: React.FC = () => {
                 console.log(err);
                 setUser('');
             });
-        axios.get('https://bug-tracker-project1.herokuapp.com/company/')
+        //get all Company
+        axios.get(apiCompanyBase, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => {
                 console.log(res.data);
                 setCompanyList(res.data);
@@ -39,37 +45,24 @@ const ViewUser: React.FC = () => {
 
     const saveUser = (e: React.FormEvent) => {
         e.preventDefault();
-        //if company is new, create a new one, else check if users in members for that Company
+        //if company is new, create a new one
         if (!companyList.map((com: CompanySchema) => com.companyName).includes(company)) {
             const newCompany = {
                 companyName: company,
-                owner: username,
-                members: [username],
+                owner: id,
             }
 
-            axios.post('https://bug-tracker-project1.herokuapp.com/company/add', newCompany)
+            axios.post(apiCompanyBase, newCompany, { headers: { Authorization: `Bearer ${user}` } })
                 .then((res) => {
                     console.log("New company created ", res.data);
                 })
                 .catch((err) => {
                     console.error(err);
                 })
-        } else {
-            let thatCompany = companyList.filter((com) => com.companyName === company);
-            console.log(thatCompany);
-            if (!thatCompany[0].members.includes(username)) {
-                axios.post('https://bug-tracker-project1.herokuapp.com/company/join/' + thatCompany[0].id, username)
-                    .then((res) => {
-                        console.log("New company created ", res.data);
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                    })
-            }
-        }
+        } 
 
-        const thisUser = { username, email, company };
-        axios.post('https://bug-tracker-project1.herokuapp.com/api/auth/update/' + id, thisUser)
+        const thisUser = { id, username, email, password, company };
+        axios.put(apiUserBase, thisUser, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => {
                 console.log(res);
             })
