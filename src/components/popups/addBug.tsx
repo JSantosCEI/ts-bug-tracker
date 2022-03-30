@@ -1,50 +1,52 @@
 import axios from "axios";
 import React, { useState, useEffect, useContext } from "react";
-import { User, SetRefresh } from '../../interfaces'
+import { User, SetRefresh, Employees } from '../../interfaces'
 import { UserContext } from "../userContext";
 import { apiBugBase } from "../api/bugApi";
 import { authUser, getAllUserByCompany } from "../api/userApi";
 
 const AddBug: React.FC<SetRefresh> = ({ refresh, setRefresh }) => {
     const [bugName, setBugName] = useState<string>('');
-    const [userId, setUserId] = useState<string | number>();
+    const [userId, setUserId] = useState<number>();
     const [type, setType] = useState<string>('Bug');
     const [description, setDescription] = useState<string>('');
-    const [assgineeId, setAssgineeId] = useState<string | number>('');
+    const [assigneeId, setAssigneeId] = useState<number>();
     const [priority, setPriority] = useState<string>('Low');
-    const [users, setUsers] = useState<Array<string>>(["-"]);
+    const [users, setUsers] = useState<Array<Employees>>([{"userId": 0, "username": "-"}]);
     const { user } = useContext(UserContext);
 
     //creates new bug and closes the popup
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        const status = (assigneeId !== 0) ? "To Do" : "Unassigned"; 
         const bug = {
             bugName,
-            reporter: userId,
             type,
             description,
+            status: status,
             priority,
-            assgineeId,
+            reporterId: userId,
+            assigneeId,
         }
         console.log(bug);
         axios.post(apiBugBase, bug, { headers: { Authorization: `Bearer ${user}` } })
             .then((res: any) => console.log(res.data))
-            .catch((err) => console.log("no user", err));
+            .catch((err) => console.error(err));
 
         setRefresh(!refresh);
     }
 
     useEffect(() => {
-        //get all users by id
+        //get all users by token
         axios.get(getAllUserByCompany + user, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => {
-                const names: Array<string> = res.data.map((user: User) => user.username);
-                setUsers(["-", ...names]);
+                const employees: Array<Employees> = res.data.map((user: User) => ({ "userId": user.userId, "username": user.username }));
+                setUsers([{"userId": 0, "username": "-"}, ...employees]);
             })
             .catch((error) => { console.log("Could Not Get Company" + error) })
         //get user info
         axios.post(authUser, { "token": user }, { headers: { Authorization: `Bearer ${user}` } })
-            .then((res) => { setUserId(res.data.userId) } )
+            .then((res) => { setUserId(res.data.userId) })
             .catch((error) => { console.log("Could Not Get User" + error) })
     }, [])
 
@@ -100,9 +102,9 @@ const AddBug: React.FC<SetRefresh> = ({ refresh, setRefresh }) => {
                                 <div className='mb-3'>
                                     <label>Assginee: (Optional)</label>
                                     <select className="form-control"
-                                        onChange={e => setAssgineeId(e.target.value)}
+                                        onChange={e => setAssigneeId(Number(e.target.value))}
                                     >
-                                        {users.map((user, index) => <option key={index}>{user}</option>)}
+                                        {users.map((user) => <option key={user.userId} value={user.userId}>{user.username}</option>)}
                                     </select>
                                 </div>
                             </form>
