@@ -3,13 +3,13 @@ export interface User {
     username: string,
     email?: string,
     password: string,
-    company?: string,
+    company?: number,
 }
 
 export interface Company {
-    id: string,
+    companyId: number,
     companyName: string,
-    owner: string,
+    owner?: string,
 }
 
 export interface Bug {
