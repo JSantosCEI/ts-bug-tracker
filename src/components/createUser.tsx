@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router";
-import { User as UserSchema } from "../interfaces";
+import { Company, User as UserSchema } from "../interfaces";
 import { UserContext } from "./userContext";
 import Spinner from "./utilities/spinner";
 import ErrorText from "./utilities/errorText";
 import { apiUserBase, login } from "./api/userApi";
+import { apiCompanyBase } from "./api/companyAPI";
 
 // if newUser prop is true this form will register a user, else for login 
 const CreateUser: React.FC = () => {
@@ -15,11 +16,22 @@ const CreateUser: React.FC = () => {
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [company, setCompany] = useState('');
+    const [company, setCompany] = useState<number>(0);
+    const [employers, setEmployers] = useState<Company[]>([{"companyId" : 0, "companyName": ""}]);
     const [isNew, setNew] = useState<boolean>(false);
     const [expired, setExpired] = useState(false);
     const [logging, setLogging] = useState<boolean>(false);
     const [failedLogIn, setFailedLogIn] = useState<boolean>(false);
+
+
+    useEffect(() => {
+        axios.get(apiCompanyBase)
+            .then((res) => {
+                var employersList = res.data.map((com: Company) => ({"companyId" : com.companyId, "companyName": com.companyName}));
+                setEmployers([{"companyId" : 0, "companyName": ""}, ...employersList]);
+            })
+            .catch(err => console.error(err));
+    })
 
     useEffect(() => {
         if (state !== null) {
@@ -40,7 +52,8 @@ const CreateUser: React.FC = () => {
         if (isNew) {
             //create new user
             thisUser.email = email;
-            thisUser.company = company ? company : "";
+            thisUser.company = company;
+            console.log(thisUser)
             await axios.post(apiUserBase, thisUser, { headers: { Authorization: `Bearer ${user}` } })
                 .then((res) => {
                     //console.log(res.data);
@@ -91,11 +104,16 @@ const CreateUser: React.FC = () => {
                                         </div>
                                         
                                         <div className="mb-3">
-                                            <label htmlFor="compnay">Company: </label>
-                                            <input type="text" value={company} name="company"
-                                                className="form-control" placeholder="Enter Company Name (Optional)"
-                                                onChange={e => setCompany(e.target.value)}
-                                            />
+                                            <label htmlFor="compnay">Company: (Optional)</label>
+                                            <select className="form-control" 
+                                                onChange={e => setCompany(Number(e.target.value))}
+                                            >
+                                                {
+                                                    employers.map(employer => 
+                                                        <option key={employer.companyId} value={employer.companyId}>{employer.companyName}
+                                                        </option>
+                                                )}
+                                            </select>
                                         </div>
                                     </div>
                                 }
