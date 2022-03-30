@@ -1,5 +1,5 @@
 export interface User {
-    id?: string | number,
+    userId?: number,
     username: string,
     email?: string,
     password: string,
@@ -13,14 +13,19 @@ export interface Company {
 }
 
 export interface Bug {
-    bugId: string | number,
+    bugId: number,
     bugName: string,
     type: string,
     description: string,
     status: string,
     priority: string,
-    reporterId: string | number,
-    assigneeId: string | number
+    reporterId: number,
+    assigneeId: number
+}
+
+export interface Employees {
+    userId: number, 
+    username: string,
 }
 
 export interface SetRefresh {
