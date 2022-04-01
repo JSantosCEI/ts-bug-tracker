@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router";
-import { Company, User as UserSchema } from "../interfaces";
+import { Company as CompanySchema, User as UserSchema } from "../interfaces";
 import { UserContext } from "./userContext";
 import Spinner from "./utilities/spinner";
 import ErrorText from "./utilities/errorText";
@@ -17,7 +17,7 @@ const CreateUser: React.FC = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [company, setCompany] = useState<number>(0);
-    const [employers, setEmployers] = useState<Company[]>([{"companyId" : 0, "companyName": ""}]);
+    const [employers, setEmployers] = useState<CompanySchema[]>([{"companyId" : 0, "companyName": ""}]);
     const [isNew, setNew] = useState<boolean>(false);
     const [expired, setExpired] = useState(false);
     const [logging, setLogging] = useState<boolean>(false);
@@ -25,13 +25,14 @@ const CreateUser: React.FC = () => {
 
 
     useEffect(() => {
+        //get all companys
         axios.get(apiCompanyBase)
             .then((res) => {
-                var employersList = res.data.map((com: Company) => ({"companyId" : com.companyId, "companyName": com.companyName}));
+                var employersList = res.data.map((com: CompanySchema) => ({"companyId" : com.companyId, "companyName": com.companyName}));
                 setEmployers([{"companyId" : 0, "companyName": ""}, ...employersList]);
             })
             .catch(err => console.error(err));
-    })
+    }, [])
 
     useEffect(() => {
         if (state !== null) {
@@ -108,10 +109,10 @@ const CreateUser: React.FC = () => {
                                             <select className="form-control" 
                                                 onChange={e => setCompany(Number(e.target.value))}
                                             >
-                                                {
-                                                    employers.map(employer => 
-                                                        <option key={employer.companyId} value={employer.companyId}>{employer.companyName}
-                                                        </option>
+                                                {employers.map(employer => 
+                                                    <option key={employer.companyId} value={employer.companyId}>
+                                                        {employer.companyName}
+                                                    </option>
                                                 )}
                                             </select>
                                         </div>
