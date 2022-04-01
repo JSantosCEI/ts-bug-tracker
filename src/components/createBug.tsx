@@ -50,7 +50,7 @@ const CreateBug: React.FC = () => {
                 const names: Array<string> = res.data.map((user: User) => user.username);
                 setUsers(["-", ...names]);
             })
-    }, [user])
+    }, [user, company])
 
     return (
         <div>

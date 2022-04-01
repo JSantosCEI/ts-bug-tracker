@@ -48,7 +48,7 @@ const AddBug: React.FC<SetRefresh> = ({ refresh, setRefresh }) => {
         axios.post(authUser, { "token": user }, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => { setUserId(res.data.userId) })
             .catch((error) => { console.log("Could Not Get User" + error) })
-    }, [])
+    }, [user])
 
     return (
         <div className="modal" tabIndex={-1} id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">

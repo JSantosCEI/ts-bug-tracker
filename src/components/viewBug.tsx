@@ -46,7 +46,7 @@ const ViewBug: React.FC = () => {
                 setUsers([{"userId": 0, "username": "-"}, ...employees]);
             })
             .catch((error) => { console.log("Could Not Get Company" + error) })
-    }, [id, setUser])
+    }, [id, user, setUser])
 
     useEffect(() => {
         //there's a assginee, so it can't be unassigned 
