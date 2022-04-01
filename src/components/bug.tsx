@@ -15,7 +15,7 @@ const Bug: React.FC<{ bug: BugSchema }> = ({ bug }) => {
 
     return (
         <div>
-            <li className="d-flex flex-row position-relative">
+            <li className="d-flex flex-row position-relative rounded">
                 <Link className={shade} to={link}>{bug.bugName}</Link>
             </li>
         </div>
