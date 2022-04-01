@@ -10,9 +10,10 @@ const ViewUser: React.FC = () => {
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [company, setCompany] = useState<string>('');
+    const [companyList, setCompanyList] = useState<CompanySchema[]>([]);
+    const [cId, setCId] = useState<number>(0);
+    const [id, setId] = useState<number>(0);
     const [password, setPassword] = useState<string>('');
-    const [companyList, setCompanyList] = useState<Array<CompanySchema>>([]);
-    const [id, setId] = useState<string>('');
     const { user, setUser } = useContext(UserContext);
     const navigate = useNavigate();
 
@@ -21,12 +22,12 @@ const ViewUser: React.FC = () => {
         //get User Data
         axios.post(authUser, { "token": user }, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => {
-                console.log(res.data.data);
-                setUsername(res.data.data.username);
-                setPassword(res.data.data.password);
-                setEmail(res.data.data.email);
-                setCompany(res.data.data.company);
-                setId(res.data.data._id);
+                console.log(res.data);
+                setPassword(res.data.password);
+                setUsername(res.data.username);
+                setEmail(res.data.email);
+                setId(res.data.userId);
+                setCId(res.data.company);
             })
             .catch((err) => {
                 console.log(err);
@@ -35,19 +36,26 @@ const ViewUser: React.FC = () => {
         //get all Company
         axios.get(apiCompanyBase, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => {
-                console.log(res.data);
                 setCompanyList(res.data);
             })
             .catch((err) => {
                 console.error(err);
             })
+        //find Company 
+        if(cId !== 0){
+            let companyToFind = companyList.filter((comp) => comp.companyId === cId);
+            setCompany(companyToFind[0].companyName);   
+        }
     }, [user, setUser])
 
     const saveUser = (e: React.FormEvent) => {
         e.preventDefault();
+        var nextCompanyId = cId;
         //if company is new, create a new one
-        if (!companyList.map((com: CompanySchema) => com.companyName).includes(company)) {
+        if (company.length > 0 && !companyList.map((com: CompanySchema) => com.companyName).includes(company)) {
+            nextCompanyId = companyList[companyList.length-1].companyId + 1;
             const newCompany = {
+                companyId: nextCompanyId,
                 companyName: company,
                 owner: id,
             }
@@ -59,10 +67,14 @@ const ViewUser: React.FC = () => {
                 .catch((err) => {
                     console.error(err);
                 })
-        } 
+        } else {
+            //not new so find the company's id
+            nextCompanyId = companyList.filter((com: CompanySchema) => com.companyName === company)[0].companyId;
+        }
 
-        const thisUser = { id, username, email, password, company };
-        axios.put(apiUserBase, thisUser, { headers: { Authorization: `Bearer ${user}` } })
+        const updateUser = {"userId": id, password, email, username, "company": nextCompanyId};
+        console.log("updating to: ", updateUser);
+        axios.put(apiUserBase, updateUser, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => {
                 console.log(res);
             })
