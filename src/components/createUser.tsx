@@ -10,7 +10,7 @@ import { apiCompanyBase } from "./api/companyAPI";
 
 // if newUser prop is true this form will register a user, else for login 
 const CreateUser: React.FC = () => {
-    const { user, setUser } = useContext(UserContext);
+    const { setUser } = useContext(UserContext);
     const { state } = useLocation();
     const navigate = useNavigate();
     const [username, setUsername] = useState<string>('');
@@ -55,7 +55,7 @@ const CreateUser: React.FC = () => {
             thisUser.email = email;
             thisUser.company = company;
             console.log(thisUser)
-            await axios.post(apiUserBase, thisUser, { headers: { Authorization: `Bearer ${user}` } })
+            await axios.post(apiUserBase, thisUser)
                 .then((res) => {
                     //console.log(res.data);
                     sessionStorage.setItem('token', res.data);
@@ -68,7 +68,7 @@ const CreateUser: React.FC = () => {
                 })
         } else {
             //login
-            await axios.post(login, thisUser, { headers: { Authorization: `Bearer ${user}` } })
+            await axios.post(login, thisUser)
                 .then((res) => {
                     //console.log(res.data);
                     sessionStorage.setItem('token', res.data);
