@@ -20,9 +20,10 @@ const BugList: React.FC = () => {
     const { user, setUser } = useContext(UserContext);
 
     useEffect(() => {
-        axios.post(authUser, { "token": user }, { headers: { Authorization: `Bearer ${user}` } })
+        console.log(user);
+        axios.post(authUser + user, {"token": user}, { headers: { 'Authorization': `Bearer ${user}` } })
             .then((res) => {
-                //console.log(res.data);
+                console.log(res.data);
                 setUsername(res.data.username);
                 axios.get(getUserBugs + res.data.userId, { headers: { Authorization: `Bearer ${user}` } })
                     .then(res => {
@@ -35,7 +36,6 @@ const BugList: React.FC = () => {
                 setUser('');
                 let message: string = err.message;
                 let code: number = parseInt(message.slice(-3));
-                console.log(code);
                 code === 400 ? setExpired(true) : console.error(err);
             });
     }, [refresh, user, setUser])

@@ -38,7 +38,7 @@ const CreateBug: React.FC = () => {
 
     useEffect(() => {
         //get user info
-        axios.post(authUser, { "token": user }, { headers: { Authorization: `Bearer ${user}` } })
+        axios.post(authUser + user, {"token": user}, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => {
                 setUsername(res.data.data.username);
                 setCompany(res.data.data.company);

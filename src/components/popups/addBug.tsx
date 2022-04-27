@@ -45,7 +45,7 @@ const AddBug: React.FC<SetRefresh> = ({ refresh, setRefresh }) => {
             })
             .catch((error) => { console.log("Could Not Get Company" + error) })
         //get user info
-        axios.post(authUser, { "token": user }, { headers: { Authorization: `Bearer ${user}` } })
+        axios.post(authUser + user, {"token": user}, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => { setUserId(res.data.userId) })
             .catch((error) => { console.log("Could Not Get User" + error) })
     }, [user])

@@ -20,7 +20,7 @@ const ViewUser: React.FC = () => {
     //call to the db for users and company info
     useEffect(() => {
         //get User Data
-        axios.post(authUser, { "token": user }, { headers: { Authorization: `Bearer ${user}` } })
+        axios.post(authUser + user, {"token": user}, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => {
                 console.log(res.data);
                 setPassword(res.data.password);
