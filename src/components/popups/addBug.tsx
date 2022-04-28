@@ -2,8 +2,8 @@ import axios from "axios";
 import React, { useState, useEffect, useContext } from "react";
 import { User, SetRefresh, Employees } from '../../interfaces'
 import { UserContext } from "../userContext";
-import { apiBugBase } from "../api/bugApi";
-import { authUser, getAllUserByCompany } from "../api/userApi";
+import { apiBugBase } from "../../api/bugApi";
+import { authUser, getAllUserByCompany } from "../../api/userApi";
 
 const AddBug: React.FC<SetRefresh> = ({ refresh, setRefresh }) => {
     const [bugName, setBugName] = useState<string>('');

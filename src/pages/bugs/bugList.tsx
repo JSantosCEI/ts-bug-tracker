@@ -1,14 +1,16 @@
 import axios from "axios";
 import React, { useState, useEffect, useContext } from "react";
 import { Navigate } from "react-router";
-import Bug from "./bug";
+
+import Bug from "../../components/bug";
+import AddBug from "../../components/popups/addBug";
+import { UserContext } from "../../components/userContext";
+import { authUser } from "../../api/userApi";
+import { getUserBugs } from "../../api/bugApi";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import AddBug from "./popups/addBug";
-import { UserContext } from "./userContext";
-import { authUser } from "./api/userApi";
-import { getUserBugs } from "./api/bugApi";
 
 library.add(faPlus);
 
@@ -20,10 +22,9 @@ const BugList: React.FC = () => {
     const { user, setUser } = useContext(UserContext);
 
     useEffect(() => {
-        console.log(user);
         axios.post(authUser + user, {"token": user}, { headers: { 'Authorization': `Bearer ${user}` } })
             .then((res) => {
-                console.log(res.data);
+                //console.log(res.data);
                 setUsername(res.data.username);
                 axios.get(getUserBugs + res.data.userId, { headers: { Authorization: `Bearer ${user}` } })
                     .then(res => {

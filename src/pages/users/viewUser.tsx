@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { Company as CompanySchema } from "../interfaces";
+import { Company as CompanySchema } from "../../interfaces";
 import { useNavigate } from "react-router";
-import { UserContext } from "./userContext";
-import { apiCompanyBase } from "./api/companyAPI";
-import { apiUserBase, authUser } from "./api/userApi";
+import { UserContext } from "../../components/userContext";
+import { apiCompanyBase } from "../../api/companyAPI";
+import { apiUserBase, authUser } from "../../api/userApi";
 
 const ViewUser: React.FC = () => {
     const [username, setUsername] = useState<string>('');

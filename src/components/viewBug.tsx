@@ -3,8 +3,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useParams } from "react-router";
 import { Employees, User as UserSchema } from '../interfaces';
-import { apiBugBase, apiBugWithId } from "./api/bugApi";
-import { getAllUserByCompany } from "./api/userApi";
+import { apiBugBase, apiBugWithId } from "../api/bugApi";
+import { getAllUserByCompany } from "../api/userApi";
 import Checker from "./popups/checker";
 import { UserContext } from "./userContext";
 

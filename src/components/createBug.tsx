@@ -3,8 +3,8 @@ import { Navigate, useNavigate } from "react-router";
 import React, { useState, useEffect, useContext } from "react";
 import { User } from '../interfaces';
 import { UserContext } from "./userContext";
-import { apiBugBase } from "./api/bugApi";
-import { authUser, getAllUserByCompany } from "./api/userApi";
+import { apiBugBase } from "../api/bugApi";
+import { authUser, getAllUserByCompany } from "../api/userApi";
 
 const CreateBug: React.FC = () => {
     const [bugName, setBugName] = useState<string>('');
