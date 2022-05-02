@@ -1,12 +1,16 @@
 import axios from "axios";
 import React, { useState, useEffect, useContext } from "react";
 import { Navigate } from "react-router";
-import Bug from "./bug";
+
+import Bug from "../../components/bug";
+import AddBug from "../../components/popups/addBug";
+import { UserContext } from "../../components/userContext";
+import { authUser } from "../../api/userApi";
+import { getUserBugs } from "../../api/bugApi";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import AddBug from "./popups/addBug";
-import { UserContext } from "./userContext";
 
 library.add(faPlus);
 
@@ -18,11 +22,13 @@ const BugList: React.FC = () => {
     const { user, setUser } = useContext(UserContext);
 
     useEffect(() => {
-        axios.get('https://bug-tracker-project1.herokuapp.com/api/private', { headers: { Authorization: `Bearer ${user}` } })
+        axios.post(authUser + user, {"token": user}, { headers: { 'Authorization': `Bearer ${user}` } })
             .then((res) => {
-                setUsername(res.data.data.username);
-                axios.get(`https://bug-tracker-project1.herokuapp.com/bugs/user/${res.data.data.username}`)
+                //console.log(res.data);
+                setUsername(res.data.username);
+                axios.get(getUserBugs + res.data.userId, { headers: { Authorization: `Bearer ${user}` } })
                     .then(res => {
+                        console.log(res.data);
                         setBugs([...res.data]);
                     })
                     .catch((err) => console.error(err));
@@ -31,30 +37,29 @@ const BugList: React.FC = () => {
                 setUser('');
                 let message: string = err.message;
                 let code: number = parseInt(message.slice(-3));
-                console.log(code);
                 code === 400 ? setExpired(true) : console.error(err);
             });
     }, [refresh, user, setUser])
 
     const unassignedList = bugs
         .filter((bug) => bug.status === "Unassigned")
-        .map((bug) => <Bug key={bug["_id"]} bug={bug} />)
+        .map((bug) => <Bug key={bug["bugId"]} bug={bug} />)
 
     const toDoList = bugs
         .filter((bug) => bug.status === "To Do")
-        .map((bug) => <Bug key={bug["_id"]} bug={bug} />)
+        .map((bug) => <Bug key={bug["bugId"]} bug={bug} />)
 
     const inProgressList = bugs
         .filter((bug) => bug.status === "In Progress")
-        .map((bug) => <Bug key={bug["_id"]} bug={bug} />)
+        .map((bug) => <Bug key={bug["bugId"]} bug={bug} />)
 
     const qaList = bugs
         .filter((bug) => bug.status === "QA")
-        .map((bug) => <Bug key={bug["_id"]} bug={bug} />)
+        .map((bug) => <Bug key={bug["bugId"]} bug={bug} />)
 
     const completeList = bugs
         .filter((bug) => bug.status === "Complete")
-        .map((bug) => <Bug key={bug["_id"]} bug={bug} />)
+        .map((bug) => <Bug key={bug["bugId"]} bug={bug} />)
 
     return (
         <div>

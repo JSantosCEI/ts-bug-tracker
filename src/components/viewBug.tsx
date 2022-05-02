@@ -2,75 +2,80 @@ import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useParams } from "react-router";
-import { User } from '../interfaces';
+import { Employees, User as UserSchema } from '../interfaces';
+import { apiBugBase, apiBugWithId } from "../api/bugApi";
+import { getAllUserByCompany } from "../api/userApi";
 import Checker from "./popups/checker";
 import { UserContext } from "./userContext";
 
 const ViewBug: React.FC = () => {
     const [bugName, setBugName] = useState<string>('');
-    const [reporter, setReporter] = useState<string>('');
+    const [reporterId, setReporterId] = useState<string>('');
     const [type, setType] = useState<string>('Bug');
     const [description, setDescription] = useState<string>('');
-    const [assginee, setAssginee] = useState<string>('');
+    const [assgineeId, setAssgineeId] = useState<number>();
     const [status, setStatus] = useState<string>('');
     const [priority, setPriority] = useState<string>('Low');
-    const [users, setUsers] = useState<Array<string>>(["-"]);
+    const [users, setUsers] = useState<Array<Employees>>([{"userId": 0, "username": "-"}]);
     const [viewMode, setMode] = useState<boolean>(true);
     const navigate = useNavigate();
-    const { setUser } = useContext(UserContext);
+    const { user, setUser } = useContext(UserContext);
     let { id } = useParams();
 
     //call to the db for users and bug info
     useEffect(() => {
-        axios.get(('https://bug-tracker-project1.herokuapp.com/bugs/' + id))
+        axios.get(apiBugWithId + id, { headers: { Authorization: `Bearer ${user}` } })
             .then((result) => {
+                console.log(result.data);
                 setBugName(result.data.bugName);
                 setType(result.data.type);
                 setDescription(result.data.description);
                 setPriority(result.data.priority);
                 setStatus(result.data.status);
-                setReporter(result.data.reporter);
-                result.data.assginee && setAssginee(result.data.assginee);
+                setReporterId(result.data.reporterId);
+                setAssgineeId(result.data.assigneeId);
             })
             .catch((err) => {
                 console.log(err);
                 setUser('');
             });
 
-        axios.get('https://bug-tracker-project1.herokuapp.com/api/auth')
+        axios.get(getAllUserByCompany + user, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => {
-                const names = res.data.map((user: User) => user.username);
-                setUsers(["-", ...names]);
+                const employees: Array<Employees> = res.data.map((user: UserSchema) => ({ "userId": user.userId, "username": user.username }));
+                setUsers([{"userId": 0, "username": "-"}, ...employees]);
             })
-    }, [id, setUser])
+            .catch((error) => { console.log("Could Not Get Company" + error) })
+    }, [id, user, setUser])
 
     useEffect(() => {
         //there's a assginee, so it can't be unassigned 
-        if (assginee !== "-" && assginee !== "" && status === "Unassigned") {
+        if (assgineeId !== 0  && status === "Unassigned") {
             console.log("terms met, change status");
             setStatus("To Do");
         }
 
         //there's no assginee, so its unassigned 
-        if (assginee === "-" && status !== "Unassigned") {
+        if (assgineeId === 0 && status !== "Unassigned") {
             setStatus("Unassigned");
         }
 
-    }, [assginee, status])
+    }, [assgineeId, status])
 
     const saveBug = (e: React.FormEvent) => {
         e.preventDefault();
         const bug = {
+            bugId: id,
             bugName,
-            reporter,
             type,
             description,
             status,
             priority,
-            assginee,
+            reporterId,
+            assgineeId
         }
         console.log(bug);
-        axios.post('https://bug-tracker-project1.herokuapp.com/bugs/update/' + id, bug)
+        axios.put(apiBugBase, bug, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => console.log(res.data))
             .catch((err) => { console.log(err); });
 
@@ -79,7 +84,7 @@ const ViewBug: React.FC = () => {
 
     const deleteBug = () => {
         console.log("Deleting");
-        axios.delete('https://bug-tracker-project1.herokuapp.com/bugs/' + id,)
+        axios.delete(apiBugWithId + id, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => console.log(res.data));
 
         window.location.href = "/bug";
@@ -163,10 +168,10 @@ const ViewBug: React.FC = () => {
                             <div className='mb-3'>
                                 <label>Assginee: </label>
                                 <select className="form-control"
-                                    value={assginee}
-                                    onChange={e => setAssginee(e.target.value)}
+                                    value={assgineeId}
+                                    onChange={e => setAssgineeId(Number(e.target.value))}
                                 >
-                                    {users.map((user, index) => <option key={index}>{user}</option>)}
+                                    {users.map((user) => <option key={user.userId} value={user.userId}>{user.username}</option>)}
                                 </select>
                             </div>
                             <input className="btn btn-primary me-1" type="submit" value="Save" />

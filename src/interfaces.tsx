@@ -1,19 +1,35 @@
-import React from "react";
 export interface User {
-    id?: string | number,
-    username?: string,
-    email: string,
+    userId?: number,
+    username: string,
+    email?: string,
     password: string,
-    company?: string,
+    company?: number,
 }
 
 export interface Company {
-    id: string,
+    companyId: number,
     companyName: string,
-    owner: string,
-    members: Array<string>
+    owner?: string,
 }
+
+export interface Bug {
+    bugId: number,
+    bugName: string,
+    type: string,
+    description: string,
+    status: string,
+    priority: string,
+    reporterId: number,
+    assigneeId: number
+}
+
+export interface Employees {
+    userId: number, 
+    username: string,
+}
+
 export interface SetRefresh {
+    cId?: number | null,
     refresh: boolean,
     setRefresh: React.Dispatch<React.SetStateAction<boolean>>
 }

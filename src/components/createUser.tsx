@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router";
-import { User as UserSchema } from "../interfaces";
+import { Company as CompanySchema, User as UserSchema } from "../interfaces";
 import { UserContext } from "./userContext";
 import Spinner from "./utilities/spinner";
 import ErrorText from "./utilities/errorText";
+import { apiUserBase, login } from "../api/userApi";
+import { apiCompanyBase } from "../api/companyAPI";
 
 // if newUser prop is true this form will register a user, else for login 
 const CreateUser: React.FC = () => {
@@ -14,11 +16,23 @@ const CreateUser: React.FC = () => {
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [company, setCompany] = useState('');
+    const [company, setCompany] = useState<number>(0);
+    const [employers, setEmployers] = useState<CompanySchema[]>([{"companyId" : 0, "companyName": ""}]);
     const [isNew, setNew] = useState<boolean>(false);
     const [expired, setExpired] = useState(false);
     const [logging, setLogging] = useState<boolean>(false);
     const [failedLogIn, setFailedLogIn] = useState<boolean>(false);
+
+
+    useEffect(() => {
+        //get all companys
+        axios.get(apiCompanyBase)
+            .then((res) => {
+                var employersList = res.data.map((com: CompanySchema) => ({"companyId" : com.companyId, "companyName": com.companyName}));
+                setEmployers([{"companyId" : 0, "companyName": ""}, ...employersList]);
+            })
+            .catch(err => console.error(err));
+    }, [])
 
     useEffect(() => {
         if (state !== null) {
@@ -30,22 +44,22 @@ const CreateUser: React.FC = () => {
     const authentication = async (e: React.FormEvent) => {
         e.preventDefault();
         setLogging(true);
-        console.log(logging);
         const thisUser: UserSchema = {
-            email,
+            username,
             password,
         }
         console.log(thisUser);
 
         if (isNew) {
             //create new user
-            thisUser.username = username;
-            thisUser.company = company ? company : "";
-            await axios.post('https://bug-tracker-project1.herokuapp.com/api/auth/register', thisUser)
+            thisUser.email = email;
+            thisUser.company = company;
+            console.log(thisUser)
+            await axios.post(apiUserBase, thisUser)
                 .then((res) => {
-                    console.log(res.data);
-                    sessionStorage.setItem('token', res.data.token);
-                    setUser(res.data.token);
+                    //console.log(res.data);
+                    sessionStorage.setItem('token', res.data);
+                    setUser(res.data);
                     navigate('/bug');
                 })
                 .catch((err) => {
@@ -54,15 +68,15 @@ const CreateUser: React.FC = () => {
                 })
         } else {
             //login
-            await axios.post('https://bug-tracker-project1.herokuapp.com/api/auth/login', thisUser)
+            await axios.post(login, thisUser)
                 .then((res) => {
-                    console.log(res.data);
-                    sessionStorage.setItem('token', res.data.token);
-                    setUser(res.data.token);
+                    //console.log(res.data);
+                    sessionStorage.setItem('token', res.data);
+                    setUser(res.data);
                     navigate('/bug');
                 })
                 .catch((err) => {
-                    console.log(err, "hello");
+                    console.log(err);
                     setFailedLogIn(true);
                 })
         }
@@ -83,27 +97,32 @@ const CreateUser: React.FC = () => {
                                     isNew &&
                                     <div>
                                         <div className="mb-3">
-                                            <label htmlFor="username">Username: </label>
-                                            <input type="text" value={username} name="username"
-                                                className="form-control" placeholder="Enter Username"
-                                                onChange={e => setUsername(e.target.value)} required
+                                            <label htmlFor="email">Email: </label>
+                                            <input type="email" value={email} name="email"
+                                                className="form-control" placeholder="Enter Email"
+                                                onChange={e => setEmail(e.target.value)} required
                                             />
                                         </div>
+                                        
                                         <div className="mb-3">
-                                            <label htmlFor="compnay">Company: </label>
-                                            <input type="text" value={company} name="company"
-                                                className="form-control" placeholder="Enter Company Name (Optional)"
-                                                onChange={e => setCompany(e.target.value)}
-                                            />
+                                            <label htmlFor="compnay">Company: (Optional)</label>
+                                            <select className="form-control" 
+                                                onChange={e => setCompany(Number(e.target.value))}
+                                            >
+                                                {employers.map(employer => 
+                                                    <option key={employer.companyId} value={employer.companyId}>
+                                                        {employer.companyName}
+                                                    </option>
+                                                )}
+                                            </select>
                                         </div>
                                     </div>
                                 }
-
                                 <div className="mb-3">
-                                    <label htmlFor="email">Email: </label>
-                                    <input type="email" value={email} name="email"
-                                        className="form-control" placeholder="Enter Email"
-                                        onChange={e => setEmail(e.target.value)} required
+                                    <label htmlFor="username">Username: </label>
+                                    <input type="text" value={username} name="username"
+                                        className="form-control" placeholder="Enter Username"
+                                        onChange={e => setUsername(e.target.value)} required
                                     />
                                 </div>
 
