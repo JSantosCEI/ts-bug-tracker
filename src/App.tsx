@@ -7,7 +7,7 @@ import { UserContext } from "./components/userContext";
 
 import NavBar from './components/navbar';
 import Home from './pages/home';
-import CreateUser from './components/createUser';
+import CreateUser from './pages/auth/createUser';
 import BugList from './pages/bugs/bugList';
 import ViewBug from './components/viewBug';
 import CreateBug from './components/createBug';
