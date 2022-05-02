@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
 import { useLocation, useNavigate } from "react-router";
-import { Company as CompanySchema, User as UserSchema } from "../interfaces";
-import { UserContext } from "./userContext";
-import Spinner from "./utilities/spinner";
-import ErrorText from "./utilities/errorText";
-import { apiUserBase, login } from "../api/userApi";
-import { apiCompanyBase } from "../api/companyAPI";
+import axios from "axios";
+
+import { Company as CompanySchema, User as UserSchema } from "../../interfaces";
+import { UserContext } from "../../components/userContext";
+import { apiUserBase, login } from "../../api/userApi";
+import { apiCompanyBase } from "../../api/companyAPI";
+import Spinner from "../../components/utilities/spinner";
+import ErrorText from "../../components/utilities/errorText";
 
 // if newUser prop is true this form will register a user, else for login 
 const CreateUser: React.FC = () => {
