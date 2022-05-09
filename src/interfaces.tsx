@@ -9,7 +9,7 @@ export interface User {
 export interface Company {
     companyId: number,
     companyName: string,
-    owner?: string,
+    owner?: number,
 }
 
 export interface Bug {
