@@ -1,12 +1,16 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
-import { Company as CompanySchema } from "../../interfaces";
 import { useNavigate } from "react-router";
+import axios from "axios";
+
+import { Company as CompanySchema } from "../../interfaces";
 import { UserContext } from "../../components/userContext";
 import { apiCompanyBase } from "../../api/companyAPI";
 import { apiUserBase, authUser } from "../../api/userApi";
+import CompanySelect from "../../components/companySelect";
+import CompanyInput from "../../components/companyInput";
 
 const ViewUser: React.FC = () => {
+    const [toggleCompanyInput, setToggleCompanyInput] = useState(false);
     const [username, setUsername] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [company, setCompany] = useState<string>('');
@@ -51,26 +55,16 @@ const ViewUser: React.FC = () => {
     const saveUser = (e: React.FormEvent) => {
         e.preventDefault();
         var nextCompanyId = cId;
-        //if company is new, create a new one
-        if (company.length > 0 && !companyList.map((com: CompanySchema) => com.companyName).includes(company)) {
-            nextCompanyId = companyList[companyList.length-1].companyId + 1;
-            const newCompany = {
-                companyId: nextCompanyId,
-                companyName: company,
-                owner: id,
-            }
-
-            axios.post(apiCompanyBase, newCompany, { headers: { Authorization: `Bearer ${user}` } })
+        //if company is new, create a new one and get the id
+        if(toggleCompanyInput === true && company !== ''){
+            const postCompany = {"companyName": company, "owner": id}
+            axios.post(apiCompanyBase, postCompany, { headers: { Authorization: `Bearer ${user}` } })
                 .then((res) => {
-                    console.log("New company created ", res.data);
+                    console.log(res.data);
+                    nextCompanyId = res.data.id;
                 })
-                .catch((err) => {
-                    console.error(err);
-                })
-        } else {
-            //not new so find the company's id
-            nextCompanyId = companyList.filter((com: CompanySchema) => com.companyName === company)[0].companyId;
-        }
+                .catch((err) => console.error(err));
+        }  
 
         const updateUser = {"userId": id, password, email, username, "company": nextCompanyId};
         console.log("updating to: ", updateUser);
@@ -104,12 +98,21 @@ const ViewUser: React.FC = () => {
                 </div>
 
                 <div className="mb-3">
-                    <label htmlFor="company">Company: </label>
-                    <input type="text" value={company} name="company"
-                        className="form-control" placeholder="Enter Your Company"
-                        onChange={e => setCompany(e.target.value)}
-                    />
+                    {
+                        toggleCompanyInput ?
+                        <CompanyInput newCompany={company} setNewCompany={setCompany} /> :
+                        <CompanySelect companyList={companyList} setCompany={setCId} 
+                        default={ {label: company, value: cId} } /> 
+                    }
+                    <div className="form-check form-switch">
+                        <input 
+                            className="form-check-input mt-2" type="checkbox" id="flexSwitchCheckDefault"
+                            checked={toggleCompanyInput} onChange={() => setToggleCompanyInput(!toggleCompanyInput)}
+                        />
+                        <label className="form-text" htmlFor="flexSwitchCheckDefault">Create New Company</label>
+                    </div> 
                 </div>
+                
                 <button type="button" className="btn btn-secondary me-1" onClick={() => navigate("/bug")}>Back</button>
                 <input className="btn btn-primary me-1" type="submit" value="Save" />
             </form>
