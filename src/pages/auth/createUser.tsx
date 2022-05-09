@@ -8,6 +8,7 @@ import { apiUserBase, login } from "../../api/userApi";
 import { apiCompanyBase } from "../../api/companyAPI";
 import Spinner from "../../components/utilities/spinner";
 import ErrorText from "../../components/utilities/errorText";
+import CompanySelect from "../../components/companySelect";
 
 // if newUser prop is true this form will register a user, else for login 
 const CreateUser: React.FC = () => {
@@ -55,7 +56,7 @@ const CreateUser: React.FC = () => {
             //create new user
             thisUser.email = email;
             thisUser.company = company;
-            console.log(thisUser)
+            console.log(thisUser);
             await axios.post(apiUserBase, thisUser)
                 .then((res) => {
                     //console.log(res.data);
@@ -94,31 +95,6 @@ const CreateUser: React.FC = () => {
                         {isNew ? <h2>Create New Account</h2> : <h2>Log In</h2>}
                         <div className="container-fluid">
                             <form onSubmit={authentication}>
-                                {
-                                    isNew &&
-                                    <div>
-                                        <div className="mb-3">
-                                            <label htmlFor="email">Email: </label>
-                                            <input type="email" value={email} name="email"
-                                                className="form-control" placeholder="Enter Email"
-                                                onChange={e => setEmail(e.target.value)} required
-                                            />
-                                        </div>
-                                        
-                                        <div className="mb-3">
-                                            <label htmlFor="compnay">Company: (Optional)</label>
-                                            <select className="form-control" 
-                                                onChange={e => setCompany(Number(e.target.value))}
-                                            >
-                                                {employers.map(employer => 
-                                                    <option key={employer.companyId} value={employer.companyId}>
-                                                        {employer.companyName}
-                                                    </option>
-                                                )}
-                                            </select>
-                                        </div>
-                                    </div>
-                                }
                                 <div className="mb-3">
                                     <label htmlFor="username">Username: </label>
                                     <input type="text" value={username} name="username"
@@ -146,6 +122,21 @@ const CreateUser: React.FC = () => {
                                         */
                                     }
                                 </div>
+                                {
+                                    isNew &&
+                                    <div>
+                                        <div className="mb-3">
+                                            <label htmlFor="email">Email: </label>
+                                            <input type="email" value={email} name="email"
+                                                className="form-control" placeholder="Enter Email"
+                                                onChange={e => setEmail(e.target.value)} required
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <CompanySelect companyList={employers} setCompany={setCompany}/>
+                                        </div>
+                                    </div>
+                                }
                                 {expired && <ErrorText message="Session Expired. Please Sign In Again" />}
                                 {failedLogIn && <ErrorText message="Incorrect Email or Password. Try Again" />}
 
