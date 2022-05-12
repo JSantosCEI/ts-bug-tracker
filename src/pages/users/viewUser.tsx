@@ -4,7 +4,7 @@ import axios from "axios";
 
 import { Company as CompanySchema } from "../../interfaces";
 import { UserContext } from "../../components/userContext";
-import { apiCompanyBase } from "../../api/companyAPI";
+import { apiCompanyBase, apiCompanyParam } from "../../api/companyAPI";
 import { apiUserBase, authUser } from "../../api/userApi";
 import CompanySelect from "../../components/companySelect";
 import CompanyInput from "../../components/companyInput";
@@ -15,6 +15,7 @@ const ViewUser: React.FC = () => {
     const [email, setEmail] = useState<string>('');
     const [company, setCompany] = useState<string>('');
     const [companyList, setCompanyList] = useState<CompanySchema[]>([]);
+    const [newCompanyName, setNewCompanyName] = useState('');
     const [cId, setCId] = useState<number>(0);
     const [id, setId] = useState<number>(0);
     const [password, setPassword] = useState<string>('');
@@ -26,12 +27,23 @@ const ViewUser: React.FC = () => {
         //get User Data
         axios.post(authUser + user, {"token": user}, { headers: { Authorization: `Bearer ${user}` } })
             .then((res) => {
-                console.log(res.data);
+                //console.log(res.data);
                 setPassword(res.data.password);
                 setUsername(res.data.username);
                 setEmail(res.data.email);
                 setId(res.data.userId);
                 setCId(res.data.company);
+
+                //get Company Name 
+                if(res.data.company !== 0) {
+                    axios.get(apiCompanyParam + res.data.company, { headers: { Authorization: `Bearer ${user}` } })
+                        .then((result) => {
+                            setCompany(result.data.companyName);   
+                        }) 
+                        .catch((err) => {
+                            console.error(err);
+                        })
+                }
             })
             .catch((err) => {
                 console.log(err);
@@ -45,19 +57,14 @@ const ViewUser: React.FC = () => {
             .catch((err) => {
                 console.error(err);
             })
-        //find Company 
-        if(cId !== 0){
-            let companyToFind = companyList.filter((comp) => comp.companyId === cId);
-            setCompany(companyToFind[0].companyName);   
-        }
     }, [user, setUser])
 
     const saveUser = (e: React.FormEvent) => {
         e.preventDefault();
         var nextCompanyId = cId;
         //if company is new, create a new one and get the id
-        if(toggleCompanyInput === true && company !== ''){
-            const postCompany = {"companyName": company, "owner": id}
+        if(toggleCompanyInput === true){
+            const postCompany = {"companyName": newCompanyName, "owner": id}
             axios.post(apiCompanyBase, postCompany, { headers: { Authorization: `Bearer ${user}` } })
                 .then((res) => {
                     console.log(res.data);
@@ -77,6 +84,12 @@ const ViewUser: React.FC = () => {
             });
     }
 
+    // useEffect(() => {
+    //   console.log(company)
+    // }, [company])
+    
+
+    // console.log("viewUser renders");
     return (
         <div className="container mt-4">
             <form className="col-sm-5 mx-auto" onSubmit={saveUser}>
@@ -100,7 +113,7 @@ const ViewUser: React.FC = () => {
                 <div className="mb-3">
                     {
                         toggleCompanyInput ?
-                        <CompanyInput newCompany={company} setNewCompany={setCompany} /> :
+                        <CompanyInput newCompany={newCompanyName} setNewCompany={setNewCompanyName} /> :
                         <CompanySelect companyList={companyList} setCompany={setCId} 
                         default={ {label: company, value: cId} } /> 
                     }
