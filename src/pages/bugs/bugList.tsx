@@ -28,7 +28,7 @@ const BugList: React.FC = () => {
                 setUsername(res.data.username);
                 axios.get(getUserBugs + res.data.userId, { headers: { Authorization: `Bearer ${user}` } })
                     .then(res => {
-                        console.log(res.data);
+                        //console.log(res.data);
                         setBugs([...res.data]);
                     })
                     .catch((err) => console.error(err));
