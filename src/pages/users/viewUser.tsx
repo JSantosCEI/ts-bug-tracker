@@ -84,12 +84,6 @@ const ViewUser: React.FC = () => {
             });
     }
 
-    // useEffect(() => {
-    //   console.log(company)
-    // }, [company])
-    
-
-    // console.log("viewUser renders");
     return (
         <div className="container mt-4">
             <form className="col-sm-5 mx-auto" onSubmit={saveUser}>
