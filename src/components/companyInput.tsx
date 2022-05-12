@@ -8,6 +8,7 @@ interface InputProps {
 const CompanyInput: React.FC<InputProps> = ({ newCompany, setNewCompany}) => {
     return (
         <div>
+            <label>New Company: (Optional)</label>
             <input type="email" value={newCompany} name="company"
                 className="form-control" placeholder="Enter New Company Name"
                 onChange={e => setNewCompany(e.target.value)} 
