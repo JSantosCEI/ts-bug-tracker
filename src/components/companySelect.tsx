@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Select, { OnChangeValue, SingleValue } from 'react-select';
 import { Company } from '../interfaces';
 
@@ -9,11 +9,11 @@ type selectOp = {
 interface SelectProps {
     companyList: Company[];
     setCompany: React.Dispatch<React.SetStateAction<number>>;
-    default?: selectOp
+    default?: selectOp;
 };
 
-const CompanySelect: React.FC<SelectProps> = ({ companyList, setCompany }, props) => {
-    const companyOptions = companyList.map((company) => {
+const CompanySelect: React.FC<SelectProps> = (props) => {
+    const companyOptions = props.companyList.map((company) => {
         let container: selectOp = {label: "", value: 0}; 
 
         container.label = company.companyName;
@@ -26,19 +26,15 @@ const CompanySelect: React.FC<SelectProps> = ({ companyList, setCompany }, props
 
     //if option is ever null Company should be set to 0
     const handleChange = (option: SingleValue<selectOp>) => {
-        (option != null) ? setCompany(option.value) : setCompany(0);
+        (option != null) ? props.setCompany(option.value) : props.setCompany(0);
         setSelectedOption(option);
     }
 
-    console.log(props.default);
-
-    // //reset the inputs as you switch between them
-    // const handleToggle = () => {
-    //     setCompany(0);
-    //     setSelectedOption(companyOptions[0]);
-    //     setCreateCompany(!createCompany);
-    // }
-
+    useEffect(() => {
+        console.log("triggered")
+        props.default && setSelectedOption(props.default);
+    }, [props.default])
+    
     return (
         <div>
             <label>Company: (Optional)</label>
