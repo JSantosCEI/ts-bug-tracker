@@ -3,3 +3,4 @@
 let host:string = "https://localhost:7216/";
 
 export var apiCompanyBase = host + "api/Company";
+export var apiCompanyParam = host + "api/Company/";
