@@ -75,5 +75,5 @@ export const getAllComapanyUsersByToken = async (token: any) => {
 
 export const getUserByToken = async (token: any) => {
     const res = await bugTrackerApi.post('User/auth/' + token, token, { headers: { 'Authorization': `Bearer ${token}` } });
-    return res.data.json() as User;
+    return res.data as User;
 }
