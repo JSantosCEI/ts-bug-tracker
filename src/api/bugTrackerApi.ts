@@ -68,7 +68,7 @@ export const getUserById = async (id: string, auth: any) => {
     return res.data;
 }
 
-export const getAllComapanyUsersByToken = async (token: any) => {
+export const getAllCompanyUsersByToken = async (token: any) => {
     const res = await bugTrackerApi.get('User/company/' + token, { headers: { 'Authorization': `Bearer ${token}` } });
     return res.data;
 }
@@ -76,4 +76,10 @@ export const getAllComapanyUsersByToken = async (token: any) => {
 export const getUserByToken = async (token: any) => {
     const res = await bugTrackerApi.post('User/auth/' + token, token, { headers: { 'Authorization': `Bearer ${token}` } });
     return res.data as User;
+}
+
+//For Company Table 
+export const getAllCompanys = async () => {
+    const res = await bugTrackerApi.get('Company')
+    return res.data;
 }
