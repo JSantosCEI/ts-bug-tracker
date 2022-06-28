@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import { Navigate } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
@@ -16,7 +16,6 @@ import { Bug as BugSchema } from "../../interfaces";
 library.add(faPlus);
 
 const BugList: React.FC = () => {
-    const [refresh, setRefresh] = useState<boolean>(false);
     const { user } = useContext(UserContext);
     const queryClient = useQueryClient();
     
@@ -62,9 +61,11 @@ const BugList: React.FC = () => {
             <div className="container my-4 bugList">
                 <div className="d-flex justify-content-between align-items-baseline">
                     <h1 className="text-capitalize">{userData.username} Bug List</h1>
-                    <button type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModal"><FontAwesomeIcon icon={faPlus} size="2x" /></button>
+                    <button type="button" className="btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <FontAwesomeIcon icon={faPlus} size="2x" />
+                    </button>
                 </div>
-                <AddBug refresh={refresh} setRefresh={setRefresh} />
+                <AddBug addBugMutation={addBugMutation}/> 
                 <br />
                 <div className="d-grid gap-5">
                     <div className="row row-col-auto pt-1 justify-content-center" style={{ minHeight: "20vh" }}>
