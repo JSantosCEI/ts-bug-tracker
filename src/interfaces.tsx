@@ -1,3 +1,5 @@
+import { UseMutationResult } from "react-query"
+
 export interface User {
     userId?: number,
     username: string,
@@ -28,10 +30,8 @@ export interface Employees {
     username: string,
 }
 
-export interface SetRefresh {
-    cId?: number | null,
-    refresh: boolean,
-    setRefresh: React.Dispatch<React.SetStateAction<boolean>>
+export interface AddProps {
+    addBugMutation: any
 }
 
 export interface Check {
