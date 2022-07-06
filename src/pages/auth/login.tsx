@@ -63,7 +63,7 @@ const Login: React.FC = () => {
                 </div>
                 {failedLogIn && <ErrorText message="Incorrect Email or Password. Try Again" />}
 
-                <div className="d-grid gap-2">
+                <div className="d-grid gap-2 col-8 mx-auto">
                     <input className="btn btn-primary" type="submit" value="Login" />
                 </div>
             </form>
