@@ -1,12 +1,12 @@
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { UserContext } from "./userContext";
 import { Navigate } from "react-router";
 
 import { getAllCompanyUsersByToken, updateBug } from "../api/bugTrackerApi";
 import { Bug as BugSchema, Employees, User as UserSchema } from "../interfaces";
-import Spinner from "./utilities/spinner";
 
+import Spinner from "./utilities/spinner";
 interface editProps {
     id: string | undefined, 
     bug: BugSchema,
@@ -22,7 +22,9 @@ const EditBug: React.FC<editProps> = ({id, bug, toggle}) => {
     const [status, setStatus] = useState<string>('');
     const [priority, setPriority] = useState<string>('Low');
     const { user } = useContext(UserContext);
+    const queryClient = useQueryClient();
 
+    //set useState
     useEffect(() => {
         setBugName(bug.bugName);
         setType(bug.type);
@@ -31,7 +33,7 @@ const EditBug: React.FC<editProps> = ({id, bug, toggle}) => {
         setStatus(bug.status);
         setReporterId(bug.reporterId);
         setAssigneeId(bug.assigneeId);
-    }, []);
+    }, [bug]);
 
     useEffect(() => {
         //there's a assginee, so it can't be unassigned 
@@ -46,17 +48,35 @@ const EditBug: React.FC<editProps> = ({id, bug, toggle}) => {
         }
     }, [assigneeId, status])
 
-    const saveMutation = useMutation((updatedBug: BugSchema) => updateBug(updatedBug, user));
+    //once updated, update the bug data
+    const saveMutation = useMutation((updatedBug: BugSchema) => updateBug(updatedBug, user), {
+        onSuccess: data => {
+            console.log("updated data: ", data);
+            queryClient.setQueriesData('bug', {
+                bugId: Number(id),
+                bugName,
+                type,
+                description,
+                status,
+                priority,
+                reporterId,
+                assigneeId
+            });
+            toggle(true);
+        }
+    });
 
-    const {isLoading: coLoading, isError: coError, data: coworkerData} = useQuery('coworkers', () => getAllCompanyUsersByToken(user));
-    if(coLoading) {
+    const {isLoading, isError, data} = useQuery('coworkers', () => getAllCompanyUsersByToken(user));
+    if(isLoading) {
         return <Spinner />;
     }
-    if(coError === undefined || coError) {
+    if(isError === undefined || isError) {
         return <Navigate to="/"/>;
     }
-    const coworkers: Array<Employees> = coworkerData.map((user: UserSchema) => ({ "userId": user.userId, "username": user.username }));
-
+    const coworkers: Array<Employees> = [
+        {"userId": 0, "username": "-"}, 
+        ...data.map((user: UserSchema) => ({ "userId": user.userId, "username": user.username }))
+    ];
 
     const saveBug = (e: React.FormEvent) => {
         e.preventDefault();
@@ -71,9 +91,7 @@ const EditBug: React.FC<editProps> = ({id, bug, toggle}) => {
             assigneeId
         }
         console.log(newBug);
-        saveMutation.mutateAsync(newBug);
-
-        toggle(true);
+        saveMutation.mutateAsync(newBug)
     }
 
     return(
