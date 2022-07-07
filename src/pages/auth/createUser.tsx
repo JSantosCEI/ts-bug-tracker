@@ -97,7 +97,7 @@ const CreateUser: React.FC = () => {
                     </div>
                 </div>
                 {failedLogIn && <ErrorText message="Incorrect Email or Password. Try Again" />}
-                <div className="d-grid gap-2 col-8 mx-auto">
+                <div className="d-grid gap-2">
                     <input className="btn btn-primary" type="submit" value="Register" />
                 </div>
             </form>

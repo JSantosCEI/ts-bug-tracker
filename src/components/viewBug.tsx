@@ -37,7 +37,7 @@ const ViewBug: React.FC = () => {
                 viewMode ?
                     <div className="mx-auto ps-3 pe-1 overflow-hidden mt-4">
                         <div className="row justify-content-md-center">
-                            <div className="col-5">
+                            <div className="col-lg-6 col-xl-4">
                                 <div className="card mx-auto">
                                     <div className="card-body py-3 px-4">
                                         <h4 className="card-title text-center">{ data.bugName }</h4>
